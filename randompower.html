@@ -6,7 +6,7 @@
             width: 10px;
             height: 20px;
             background-color: blue;
-            transition: width 0.1s;
+            transition: width 0.05s;
         }
     </style>
 </head>
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     growButton.addEventListener('mousedown', function () {
-        intervalId = setInterval(updateBarWidth, 30);
+        intervalId = setInterval(updateBarWidth, 25);
     });
 
     growButton.addEventListener('mouseup', function () {
@@ -61,10 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 1);
     });
 });
-
-
-
-
 
     
     </script>
