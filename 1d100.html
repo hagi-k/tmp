@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>1D100(2D10)</title>
+    <title>Random Number Generator</title>
 <script>
     function generateRandomNumbers(strength) {
         let min, max ,increase;
@@ -18,11 +18,13 @@
         let interval = 30; // 初期間隔
 //        let increase = 7; // 毎回の増加量
         let lastValuesA = [], lastValuesB = [];
-
+        
+        
         function updateNumbers() {
             if(iterations <= 0) {
                 let result = valueA === 0 && valueB === 0 ? 100 : valueA * 10 + valueB;
                 document.getElementById('result').textContent = 'Result: ' + result;
+                console.log(`Button: ${strength}, Value A: ${valueA}, Value B: ${valueB}, Result: ${result}`);
                 return;
             }
 
@@ -49,13 +51,14 @@
         }
 
         let valueA, valueB;
+//        console.log(`Button pressed: ${strength}`);
         setTimeout(updateNumbers, interval); // 最初の試行をスケジュール
     }
 </script>
 
 </head>
 <body>
-    <h1>1D100(2D10)</h1>
+    <h1>Random Number Generator</h1>
     <button onclick="generateRandomNumbers('weak')">Weak</button>
     <button onclick="generateRandomNumbers('medium')">Medium</button>
     <button onclick="generateRandomNumbers('strong')">Strong</button>
