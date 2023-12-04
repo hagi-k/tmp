@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #bar {
+            width: 10px;
+            height: 20px;
+            background-color: blue;
+            transition: width 0.1s;
+        }
+    </style>
+</head>
+<body>
+    <button id="growButton">ボタンを押してください</button>
+    <div id="bar"></div>
+    <p>バーの長さ: <span id="barLength">1</span></p>
+
+    <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    const growButton = document.getElementById('growButton');
+    const bar = document.getElementById('bar');
+    const barLengthDisplay = document.getElementById('barLength');
+    let barWidth = 1;
+    let increasing = true; // バーが増加しているかどうかを追跡
+    let intervalId = null;
+
+    const updateBarWidth = () => {
+        if (increasing) {
+            barWidth++;
+            if (barWidth >= 12) {
+                increasing = false;
+            }
+        } else {
+            barWidth--;
+            if (barWidth <= 1) {
+                increasing = true;
+            }
+        }
+
+        bar.style.width = barWidth * 20 + 'px';
+        barLengthDisplay.textContent = barWidth;
+    };
+
+    growButton.addEventListener('mousedown', function () {
+        intervalId = setInterval(updateBarWidth, 30);
+    });
+
+    growButton.addEventListener('mouseup', function () {
+        clearInterval(intervalId);
+        let releaseCount = Math.floor(Math.random() * 3); // ランダムすべり回数
+        let releaseCounter = 0;
+
+        let releaseInterval = setInterval(function () {
+            if (releaseCounter < releaseCount) {
+                updateBarWidth();
+                releaseCounter++;
+            } else {
+                clearInterval(releaseInterval);
+            }
+        }, 1);
+    });
+});
+
+
+
+
+
+    
+    </script>
+</body>
+</html>
