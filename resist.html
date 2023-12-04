@@ -82,10 +82,10 @@ function compareValues() {
     if (!isNaN(resultD)) {
         if (resultC <= 0) {
             comparisonResult = '自動的失敗';
-        } else if (resultD >= 95) {
+        } else if (resultD >= 96) {
             comparisonResult = 'ファンブル（大失敗）';
         } else if (resultD <= 5) {
-            comparisonResult = 'クリティカル（大成功）';
+            comparisonResult = 'クリティカル（決定的成功）';
         } else {
             comparisonResult = resultC <= resultD ? '失敗' : '成功';
         }
