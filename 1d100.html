@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>1D100(2D10)</title>
+<script>
+    function generateRandomNumbers(strength) {
+        let min, max ,increase;
+        switch(strength) {
+            case 'weak':
+                min = 2; max = 5; increase = 15; break;
+            case 'medium':
+                min = 4; max = 9; increase = 8; break;
+            case 'strong':
+                min = 8; max = 12; increase = 6; break;
+        }
+
+        let iterations = Math.floor(Math.random() * (max - min + 1)) + min;
+        let interval = 30; // 初期間隔
+//        let increase = 7; // 毎回の増加量
+        let lastValuesA = [], lastValuesB = [];
+
+        function updateNumbers() {
+            if(iterations <= 0) {
+                let result = valueA === 0 && valueB === 0 ? 100 : valueA * 10 + valueB;
+                document.getElementById('result').textContent = 'Result: ' + result;
+                return;
+            }
+
+            do {
+                valueA = Math.floor(Math.random() * 10);
+            } while(lastValuesA.includes(valueA));
+
+            do {
+                valueB = Math.floor(Math.random() * 10);
+            } while(lastValuesB.includes(valueB));
+
+            if(lastValuesA.length >= 2) lastValuesA.shift();
+            if(lastValuesB.length >= 2) lastValuesB.shift();
+            lastValuesA.push(valueA);
+            lastValuesB.push(valueB);
+
+            document.getElementById('valueA').textContent = 'Value A: ' + valueA;
+            document.getElementById('valueB').textContent = 'Value B: ' + valueB;
+
+            iterations--;
+            interval += increase; // 次の試行までの間隔を増やす
+
+            setTimeout(updateNumbers, interval); // 次の試行をスケジュール
+        }
+
+        let valueA, valueB;
+        setTimeout(updateNumbers, interval); // 最初の試行をスケジュール
+    }
+</script>
+
+</head>
+<body>
+    <h1>1D100(2D10)</h1>
+    <button onclick="generateRandomNumbers('weak')">Weak</button>
+    <button onclick="generateRandomNumbers('medium')">Medium</button>
+    <button onclick="generateRandomNumbers('strong')">Strong</button>
+    <p id="valueA">Value A: </p>
+    <p id="valueB">Value B: </p>
+    <p id="result">Result: </p>
+</body>
+</html>
