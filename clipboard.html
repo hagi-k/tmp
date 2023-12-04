@@ -4,15 +4,15 @@
     <title>Textarea Clipboard Example</title>
 </head>
 <body>
-​
-    <textarea id="textarea1">{"kind":"character","data":{"name":"new char","initiative":0,"externalUrl":"https://iachara.com/view/5434783","iconUrl":"","commands":"1d100<={SAN} 【正気度ロール】\nCC<=0 【アイデア】\nCC<={幸運} 【幸運】\nCC<=0 【知識】\nCC<=25 【目星】\nCC<=20 【聞き耳】\nCC<=20 【図書館】\nCC<=0 【回避】\n1d3-2 【ダメージ判定】\n1d4-2 【ダメージ判定】\n1d6-2 【ダメージ判定】\nCC<={STR}　【STR】\nCC<={CON}　【CON】\nCC<={POW}　【POW】\nCC<={DEX}　【DEX】\nCC<={APP}　【APP】\nCC<={SIZ}　【SIZ】\nCC<={INT}　【INT】\nCC<={EDU}　【EDU】\n","status":[{"label":"HP","value":0,"max":0},{"label":"MP","value":0,"max":0},{"label":"SAN","value":0,"max":0},{"label":"幸運","value":0,"max":0}],"params":[{"label":"STR","value":"0"},{"label":"CON","value":"0"},{"label":"POW","value":"0"},{"label":"DEX","value":"0"},{"label":"APP","value":"0"},{"label":"SIZ","value":"0"},{"label":"INT","value":"0"},{"label":"EDU","value":"0"}]}}<br /><br />
-    <textarea id="textarea2">{"kind":"character","data":{"name":"新たな探索者","initiative":10,"externalUrl":"https://iachara.com/view/1538274","iconUrl":"https://image.iaproject.app/1538274.png","commands":"1d100<={SAN} 【正気度ロール】\nCC<=0 【アイデア】\nCC<=45 【幸運】\nCC<=0 【知識】\nCC<=25 【目星】\nCC<=25 【聞き耳】\nCC<=25 【図書館】\nCC<=20 【回避】\nCC<=50 【こぶし（パンチ）】\n1d3-1D6 【ダメージ判定】\n1d4-1D6 【ダメージ判定】\n1d6-1D6 【ダメージ判定】\nCC<={STR}*5 【STR × 5】\nCC<={CON}*5 【CON × 5】\nCC<={POW}*5 【POW × 5】\nCC<={DEX}*5 【DEX × 5】\nCC<={APP}*5 【APP × 5】\nCC<={SIZ}*5 【SIZ × 5】\nCC<={INT}*5 【INT × 5】\nCC<={EDU}*5 【EDU × 5】\n","status":[{"label":"HP","value":4,"max":4},{"label":"MP","value":9,"max":9},{"label":"SAN","value":0,"max":0}],"params":[{"label":"STR","value":"9"},{"label":"CON","value":"7"},{"label":"POW","value":"9"},{"label":"DEX","value":"10"},{"label":"APP","value":"9"},{"label":"SIZ","value":"0"},{"label":"INT","value":"0"},{"label":"EDU","value":"0"}]}}<br /><br />
+
+    <textarea id="textarea1">Textarea<br /><br />
+    <textarea id="textarea2">いあきゃら{"kind":"character","data":{"name":"新たな探索者","initiative":10,"externalUrl":"https://iachara.com/view/1538274","iconUrl":"https://image.iaproject.app/1538274.png","commands":"1d100<={SAN} 【正気度ロール】\nCCB<=0 【アイデア】\nCCB<=45 【幸運】\nCCB<=0 【知識】\nCCB<=25 【目星】\nCCB<=25 【聞き耳】\nCCB<=25 【図書館】\nCCB<=20 【回避】\nCCB<=50 【こぶし（パンチ）】\n1d3-1D6 【ダメージ判定】\n1d4-1D6 【ダメージ判定】\n1d6-1D6 【ダメージ判定】\nCCB<={STR}*5 【STR × 5】\nCCB<={CON}*5 【CON × 5】\nCCB<={POW}*5 【POW × 5】\nCCB<={DEX}*5 【DEX × 5】\nCCB<={APP}*5 【APP × 5】\nCCB<={SIZ}*5 【SIZ × 5】\nCCB<={INT}*5 【INT × 5】\nCCB<={EDU}*5 【EDU × 5】\n","status":[{"label":"HP","value":4,"max":4},{"label":"MP","value":9,"max":9},{"label":"SAN","value":0,"max":0}],"params":[{"label":"STR","value":"9"},{"label":"CON","value":"7"},{"label":"POW","value":"9"},{"label":"DEX","value":"10"},{"label":"APP","value":"9"},{"label":"SIZ","value":"0"},{"label":"INT","value":"0"},{"label":"EDU","value":"0"}]}}<br /><br />
     <br /><br /><br />
-​
+
     <textarea id="textarea3">Textarea 2の内容</textarea><br /><br /><br />
     <textarea id="textarea4">Textarea 3の内容</textarea><br /><br /><br />
-​
-​
+
+
     <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('textarea').forEach(function(textarea) {
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // テキストを選択してクリップボードにコピー
             textarea.select();
             document.execCommand('copy');
-​
+
             // メッセージ表示用の要素を作成
             const message = document.createElement('div');
             message.textContent = ' コピーしました！ ';
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
             message.style.borderRadius = '3px';
             message.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
             document.body.appendChild(message);
-​
+
             // 3秒後にメッセージを削除
             setTimeout(function() {
                 message.remove();
@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
     </script>
-​
-​
+
+
 </body>
 </html>
+
