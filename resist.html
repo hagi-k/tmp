@@ -87,7 +87,7 @@ function compareValues() {
         } else if (resultD <= 5) {
             comparisonResult = 'クリティカル（大成功）';
         } else {
-            comparisonResult = resultC <= resultD ? '成功' : '失敗';
+            comparisonResult = resultC <= resultD ? '失敗' : '成功';
         }
     }
     document.getElementById('comparisonResult').textContent = comparisonResult;
