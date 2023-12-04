@@ -77,10 +77,20 @@ function generateRandom() {
 function compareValues() {
     const resultC = parseInt(document.getElementById('resultC').textContent, 10);
     const resultD = parseInt(document.getElementById('resultD').textContent, 10);
+
+    let comparisonResult = '-';
     if (!isNaN(resultD)) {
-        const comparisonResult = resultC <= resultD ? '失敗' : '成功';
-        document.getElementById('comparisonResult').textContent = comparisonResult;
+        if (resultC <= 0) {
+            comparisonResult = '自動的失敗';
+        } else if (resultD >= 95) {
+            comparisonResult = 'ファンブル（大失敗）';
+        } else if (resultD <= 5) {
+            comparisonResult = 'クリティカル（大成功）';
+        } else {
+            comparisonResult = resultC <= resultD ? '成功' : '失敗';
+        }
     }
+    document.getElementById('comparisonResult').textContent = comparisonResult;
 }
 
 document.getElementById('inputA').addEventListener('input', updateC);
