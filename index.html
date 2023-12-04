@@ -1,217 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<!--
+
+以下のhtmlとスクリプトをお願いします
+・2桁の数字を入力するA、Bのinputフォーム2つ
+・A、Bのフォームは、キーボードから入力を受け付けるとともに、＋、ーボタンで1ずつ数字を上下できる
+・A、Bのフォームの数字範囲は0～99
+・A、Bの値をもとに、50-(A*5-B*5)の結果Cをリアルタイムに表示する
+・Cの下にランダムボタン。このボタンを押すと、1～99のランダムな値Dを1つ表示する。
+・CとDを比較し、CがDより上なら失敗、CがD以下なら成功と表示する
+
+-->
+
+
 <head>
-    <title>円を積むゲーム</title>
-    <style>
-        #gameCanvas {
-            border: 1px solid black;
-            width: 800px;
-            height: 600px;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>抵抗表ロール</title>
 </head>
 <body>
-    <div id="gameCanvas"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
-    <script>
-    
-const { Engine, Render, World, Bodies, Body, Events } = Matter;
-
-// エンジンとレンダラーの作成
-const engine = Engine.create({
-    // 重力を半分に設定
-    gravity: {
-        x: 0,
-        y: 0.5
-    }
-});
-const render = Render.create({
-    element: document.getElementById('gameCanvas'),
-    engine: engine,
-    options: {
-        width: 800,
-        height: 600,
-        wireframes: false
-    }
-});
-
-// エンジンの時間スケールを調整して、物体の動きを遅くする
-engine.timing.timeScale = 0.65;
-
-// ゲームの状態
-let currentCircle = null;
-let score = 0;
-const circleSizes = [8, 13, 20, 30, 45, 60, 85, 110, 140]; // 可能な円のサイズ
-const circleColor = ['#ff3300', '#0080f0', '#ff3300', '#f033f0', '#ff3300', '#2e8b57', '#ffc0cb', '#a0522d', '#006400']; // 円の色
-
-// 床と壁を作成
-const floor = Bodies.rectangle(400, 590, 810, 60, { isStatic: true });
-const leftWall = Bodies.rectangle(0, 300, 60, 600, { isStatic: true });
-const rightWall = Bodies.rectangle(800, 300, 60, 600, { isStatic: true });
-World.add(engine.world, [floor, leftWall, rightWall]);
-
-// 全ての円を格納する配列
-let circles = [];
-
-// 円を生成する関数
-function createCircle(x, y, sizeIndex) {
-    const radius = circleSizes[sizeIndex];
-    const circle = Bodies.circle(x, y, radius, {
-        restitution: 0.6,
-        friction: 0.001,
-        render: {
-            fillStyle: circleColor[sizeIndex]
-        }
-    });
-    circle.sizeIndex = sizeIndex; // サイズインデックスを保持
-    circles.push(circle); // 配列に円を追加
-    World.add(engine.world, [circle]);
-    return circle;
-}
-
-// 初期円の生成
-currentCircle = createCircle(400, 100, 0);
-
-// スコアの更新
-function updateScore() {
-    score++;
-    console.log("スコア:", score);
-}
-
-// キーボードイベントの処理
-document.addEventListener('keydown', function(event) {
-    if (event.code === 'Space' && currentCircle !== null) {
-        // スペースバーで円を落とす
-        Body.setStatic(currentCircle, false);
-        const nextSizeIndex = Math.floor(Math.random() * (circleSizes.length-4));
-        currentCircle = createCircle(400, 0-circleSizes[nextSizeIndex], nextSizeIndex); // 新しい円を生成
-    } else if (event.code === 'ArrowLeft' && currentCircle !== null) {
-        // 左キーで円を左に移動
-        Body.translate(currentCircle, { x: -10, y: 0 });
-    } else if (event.code === 'ArrowRight' && currentCircle !== null) {
-        // 右キーで円を右に移動
-        Body.translate(currentCircle, { x: 10, y: 0 });
-    }
-});
-
-// フラッシュさせるためのスタイル
-const flashStyle = {
-    fillStyle: 'white'
-};
-
-// フラッシュ効果を管理するための変数
-let flashCircles = [];
-let flashDuration = 10; // フラッシュの持続時間（フレーム数）
-
-// パーティクルを作成する関数
-function createParticle(x, y) {
-    return Bodies.circle(x, y, 3, {
-        render: { fillStyle: 'orange' },
-        isStatic: false,
-        restitution: 0.5,
-        friction: 0.1,
-        lifespan: 30 // パーティクルの寿命（更新サイクル数）
-    });
-}
-
-// パーティクルの配列
-let particles = [];
-
-// 同じサイズの円が接触しているかをチェックする関数
-function checkForCollisions() {
-    let toRemove = []; // 削除する円のリスト
-    let toFlash = []; // フラッシュさせる円のリスト
-
-    for (let i = 0; i < circles.length; i++) {
-        for (let j = i + 1; j < circles.length; j++) {
-            const circleA = circles[i];
-            const circleB = circles[j];
-            if (circleA.sizeIndex === circleB.sizeIndex) {
-                const dx = circleA.position.x - circleB.position.x;
-                const dy = circleA.position.y - circleB.position.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                const combinedRadius = circleSizes[circleA.sizeIndex] * 2;
-
-                if (distance < combinedRadius) {
-                    // 同じサイズの円が接触している
-                    toFlash.push(circleA);
-                    toFlash.push(circleB);
-                    toRemove.push(circleA);
-                    toRemove.push(circleB);
-
-                    const newSizeIndex = circleA.sizeIndex + 1 < circleSizes.length ? circleA.sizeIndex + 1 : 0;
-                    let newX = (circleA.position.x + circleB.position.x) / 2;
-                    let newY = (circleA.position.y + circleB.position.y) / 2;
-                    if (newSizeIndex !== 0) { // 最大サイズの場合は生成しない
-                        createCircle(newX, newY, newSizeIndex); // 新しい円を生成
-                    }
-                    updateScore();
-                }
-            }
-        }
-    }
-
-    // 削除する円を処理
-    toRemove.forEach(circle => {
-        World.remove(engine.world, circle);
-        circles = circles.filter(c => c !== circle);
-    });
-
-    // フラッシュする円を処理
-    toFlash.forEach(circle => {
-        flashCircles.push({ circle: circle, duration: flashDuration });
-    });
-}
-
-// パーティクルの更新
-function updateParticles() {
-    particles.forEach(particle => {
-        // パーティクルの寿命を減らす
-        particle.lifespan -= 1;
-        if (particle.lifespan <= 0) {
-            World.remove(engine.world, particle);
-            particles = particles.filter(p => p !== particle);
-        }
-    });
-}
-
-// カスタムレンダリング
-Events.on(render, 'afterRender', function() {
-    const context = render.context;
-
-    // フラッシュ効果の描画
-    flashCircles = flashCircles.filter(flashCircle => {
-        if (flashCircle.duration > 0) {
-            const circle = flashCircle.circle;
-            context.beginPath();
-            context.arc(circle.position.x, circle.position.y, circle.circleRadius, 0, 2 * Math.PI);
-            context.fillStyle = flashStyle.fillStyle;
-            context.fill();
-            flashCircle.duration--;
-            return true;
-        }
-        return false;
-    });
-
-    // パーティクルの描画
-    particles.forEach(particle => {
-        context.beginPath();
-        context.arc(particle.position.x, particle.position.y, particle.circleRadius, 0, 2 * Math.PI, false);
-        context.fillStyle = particle.render.fillStyle;
-        context.fill();
-    });
-});
-
-// エンジン更新前に衝突チェックとパーティクル更新を行う
-Events.on(engine, 'beforeUpdate', function() {
-    checkForCollisions();
-    updateParticles();
-});
-
-// エンジンとレンダラーの実行
-Engine.run(engine);
-Render.run(render);
-
-
-    
-    </script>
+    <a href="suikaris.html">スイカリス</a>
+    <a href="resist.html">抵抗表ロール</a>
+    <a href="clipboard.html">クリップボード</a>
 </body>
-</html>
