@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<!--
+
+以下のhtmlとスクリプトをお願いします
+・2桁の数字を入力するA、Bのinputフォーム2つ
+・A、Bのフォームは、キーボードから入力を受け付けるとともに、＋、ーボタンで1ずつ数字を上下できる
+・A、Bのフォームの数字範囲は0～99
+・A、Bの値をもとに、50-(A*5-B*5)の結果Cをリアルタイムに表示する
+・Cの下にランダムボタン。このボタンを押すと、1～99のランダムな値Dを1つ表示する。
+・CとDを比較し、CがDより上なら失敗、CがD以下なら成功と表示する
+
+-->
+
+
+<head>
+<meta charset="UTF-8">
+<title>抵抗表ロール</title>
+</head>
+<body>
+    <h1>抵抗表ロール</h1>
+    <p>
+        能動側（攻撃etc）: <input type="number" id="inputA" min="0" max="99" value="0"> 
+        <button onclick="increment('A')">+</button>
+        <button onclick="decrement('A')">-</button>
+    </p>
+    <p>
+        受動側（受けetc）: <input type="number" id="inputB" min="0" max="99" value="0">
+        <button onclick="increment('B')">+</button>
+        <button onclick="decrement('B')">-</button>
+    </p>
+    <p>目標値: <span id="resultC">50</span></p>
+    <button onclick="generateRandom()">ダイスロール</button>
+    <p>ダイスの値: <span id="resultD">-</span></p>
+    <p>結果: <span id="comparisonResult">-</span></p>
+
+<p>サンプル</p>
+<ul>
+<li>固く閉じられたドア（STR:6）、それを開ける人（STR:4）</li>
+<li>運ぶ人（STR:6）、運ばれる人（SIZ:5）</li>
+</ul>
+
+    <script>
+    
+function updateC() {
+    const inputA = parseInt(document.getElementById('inputA').value, 10);
+    const inputB = parseInt(document.getElementById('inputB').value, 10);
+    const resultC = 50 + (inputA - inputB ) * 5;
+    document.getElementById('resultC').textContent = resultC;
+    compareValues();
+}
+
+function increment(field) {
+    const inputField = document.getElementById(`input${field}`);
+    let value = parseInt(inputField.value, 10);
+    if (value < 99) {
+        inputField.value = value + 1;
+        updateC();
+    }
+}
+
+function decrement(field) {
+    const inputField = document.getElementById(`input${field}`);
+    let value = parseInt(inputField.value, 10);
+    if (value > 0) {
+        inputField.value = value - 1;
+        updateC();
+    }
+}
+
+function generateRandom() {
+    const randomValue = Math.floor(Math.random() * 99) + 1;
+    document.getElementById('resultD').textContent = randomValue;
+    compareValues();
+}
+
+function compareValues() {
+    const resultC = parseInt(document.getElementById('resultC').textContent, 10);
+    const resultD = parseInt(document.getElementById('resultD').textContent, 10);
+    if (!isNaN(resultD)) {
+        const comparisonResult = resultC <= resultD ? '失敗' : '成功';
+        document.getElementById('comparisonResult').textContent = comparisonResult;
+    }
+}
+
+document.getElementById('inputA').addEventListener('input', updateC);
+document.getElementById('inputB').addEventListener('input', updateC);
+
+    
+    </script>
+
+</body>
+</html>
+
