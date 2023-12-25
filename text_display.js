@@ -1,89 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
     const textDisplay = document.getElementById('textDisplay');
-    let jsonData = [
-	{
-		"text": "さざ波一つない、平坦な水面。ところどころで白い水煙がゆらめいていた。",
-		"linefeed": 1,
-		"color": "#000;",
-		"speed": 100,
-		"wait": 1,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "その中心が、ゆっくりと、盛り上がってきた。水中から何かが出てきているのではなく、液体そのものが上昇しているのだ。それは見上げるほどの高さになると、ぷるぷると震え始めた。飛沫しぶきが迸ほとばしった。",
-		"linefeed": 1,
-		"color": "#000;",
-		"speed": 100,
-		"wait": 1,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "その中心が、ゆっくりと、盛り上がってきた。水中から何かが出てきているのではなく、液体そのものが上昇しているのだ。それは見上げるほどの高さになると、ぷるぷると震え始めた。飛沫しぶきが迸ほとばしった。",
-		"linefeed": 1,
-		"color": "#000;",
-		"speed": 100,
-		"wait": 1,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "僕は既に知っていた。",
-		"linefeed": 1,
-		"color": "#000;",
-		"speed": 200,
-		"wait": 1,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "そこに現れる",
-		"linefeed": 0,
-		"color": "#000;",
-		"speed": 300,
-		"wait": 0,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "美少女",
-		"linefeed": 0,
-		"color": "#f00;",
-		"speed": 400,
-		"wait": 0,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "の姿を。",
-		"linefeed": 1,
-		"color": "#000;",
-		"speed": 400,
-		"wait": 0,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	}
-];
+    let jsonData = [ /* ここにJSONデータをコピー */ ];
     let currentIndex = 0;
+    let currentParagraph = null;
 
     function displayTextWithDelay(text, color, speed, callback) {
-        let newParagraph = document.createElement('p');
-        newParagraph.style.color = color;
-        newParagraph.style.textAlign = 'left';
-        textDisplay.appendChild(newParagraph);
+        if (!currentParagraph) {
+            currentParagraph = document.createElement('p');
+            currentParagraph.style.color = color;
+            currentParagraph.style.textAlign = 'left';
+            textDisplay.appendChild(currentParagraph);
+        }
 
         let i = 0;
         let interval = setInterval(() => {
             if (i < text.length) {
-                newParagraph.innerHTML += text.charAt(i);
+                currentParagraph.innerHTML += text.charAt(i);
                 i++;
             } else {
                 clearInterval(interval);
@@ -107,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const item = jsonData[currentIndex];
             displayTextWithDelay(item.text, item.color, item.speed, () => {
                 if (item.linefeed === 1) {
+                    currentParagraph = null; // Reset for new paragraph
                     waitForUserInput(() => {
                         currentIndex++;
                         processJSON();
