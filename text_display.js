@@ -75,12 +75,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentIndex = 0;
 
     function displayTextWithDelay(text, color, speed, callback) {
-        textDisplay.innerHTML = '';
-        textDisplay.style.color = color;
+        let newParagraph = document.createElement('p');
+        newParagraph.style.color = color;
+        newParagraph.style.textAlign = 'left';
+        textDisplay.appendChild(newParagraph);
+
         let i = 0;
         let interval = setInterval(() => {
             if (i < text.length) {
-                textDisplay.innerHTML += text.charAt(i);
+                newParagraph.innerHTML += text.charAt(i);
                 i++;
             } else {
                 clearInterval(interval);
