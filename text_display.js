@@ -139,11 +139,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-    let currentParagraph = null;
-
-function displayTextWithDelay(text, color, speed, linefeed, backgroundImage, callback) {
-    if (backgroundImage) {
-        updateBackground(backgroundImage);
+	let currentParagraph = null;
+	function displayTextWithDelay(text, color, speed, linefeed, backgroundImage, callback) {
+		if (backgroundImage) {
+			updateBackground(backgroundImage);
     }
 
     if (linefeed === 1 || !currentParagraph) {
