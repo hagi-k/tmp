@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		"color": "#000;",
 		"speed": 10,
 		"wait": 1,
-		"background-image": "p1.webp",
+		"background-image": "https://drive.google.com/file/d/16shXc8S6cNlNqLS_gtJ3aQQK3ZAqtnw9/view?usp=drive_link",
 		"bgm": "",
 		"se": ""
 	},
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		"color": "#000;",
 		"speed": 10,
 		"wait": 1,
-		"background-image": "p2.webp",
+		"background-image": "https://drive.google.com/file/d/18Z66uhMvD8Y6ErrR8xrs97Kr_Es8L1H-/view?usp=drive_link",
 		"bgm": "",
 		"se": ""
 	},
