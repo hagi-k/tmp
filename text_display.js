@@ -5,13 +5,33 @@ document.addEventListener('DOMContentLoaded', function() {
     textDisplay.style.textAlign = 'left'; // Set text alignment to left
 
     let jsonData = [
-	{
+    {
+		"text": "　",
+		"linefeed": 1,
+		"color": "#000;",
+		"speed": 10,
+		"wait": 0,
+		"background-image": "",
+		"bgm": "",
+		"se": ""
+	},
+    {
 		"text": "さざ波一つない、平坦な水面。ところどころで白い水煙がゆらめいていた。",
 		"linefeed": 1,
 		"color": "#000;",
 		"speed": 10,
 		"wait": 1,
-		"background-image": "https://drive.google.com/file/d/16shXc8S6cNlNqLS_gtJ3aQQK3ZAqtnw9/view?usp=drive_link",
+		"background-image": "p1.webp",
+		"bgm": "",
+		"se": ""
+	},
+    {
+		"text": "　",
+		"linefeed": 1,
+		"color": "#000;",
+		"speed": 0,
+		"wait": 0,
+		"background-image": "",
 		"bgm": "",
 		"se": ""
 	},
@@ -21,7 +41,17 @@ document.addEventListener('DOMContentLoaded', function() {
 		"color": "#000;",
 		"speed": 10,
 		"wait": 1,
-		"background-image": "https://drive.google.com/file/d/18Z66uhMvD8Y6ErrR8xrs97Kr_Es8L1H-/view?usp=drive_link",
+		"background-image": "p2.webp",
+		"bgm": "",
+		"se": ""
+	},
+    {
+		"text": "　",
+		"linefeed": 1,
+		"color": "#000;",
+		"speed": 10,
+		"wait": 0,
+		"background-image": "",
 		"bgm": "",
 		"se": ""
 	},
@@ -31,6 +61,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		"color": "#000;",
 		"speed": 200,
 		"wait": 1,
+		"background-image": "p1.webp",
+		"bgm": "",
+		"se": ""
+	},
+    {
+		"text": "　",
+		"linefeed": 1,
+		"color": "#000;",
+		"speed": 10,
+		"wait": 0,
 		"background-image": "",
 		"bgm": "",
 		"se": ""
@@ -51,7 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		"color": "#f00;",
 		"speed": 400,
 		"wait": 0,
-		"background-image": "",
+		"background-image": "p3.png",
 		"bgm": "",
 		"se": ""
 	},
@@ -127,9 +167,27 @@ document.addEventListener('DOMContentLoaded', function() {
         backgroundIndex++;
     }
 
+    function showPromptIndicator() {
+        const promptIndicator = document.getElementById('promptIndicator');
+        promptIndicator.style.display = 'block';
+        promptIndicator.classList.add('fade-in-out'); // Fade in-out animation
+    
+        // テキスト表示エリアを一番下までスクロール
+        textDisplay.scrollTop = textDisplay.scrollHeight;
+    }
+    
+    
+    function hidePromptIndicator() {
+        const promptIndicator = document.getElementById('promptIndicator');
+        promptIndicator.classList.remove('fade-in-out'); // Stop animation
+        promptIndicator.style.display = 'none';
+    }
 
+    // waitForUserInput 関数の変更
     function waitForUserInput(callback) {
+        showPromptIndicator(); // ▼マークを表示
         function onInput() {
+            hidePromptIndicator(); // ▼マークを非表示
             document.removeEventListener('click', onInput);
             document.removeEventListener('keydown', onInput);
             callback();
@@ -139,42 +197,48 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-	let currentParagraph = null;
-	function displayTextWithDelay(text, color, speed, linefeed, backgroundImage, callback) {
-		if (backgroundImage) {
-			updateBackground(backgroundImage);
-    }
-
-    if (linefeed === 1 || !currentParagraph) {
-        currentParagraph = document.createElement('p');
-        currentParagraph.style.color = color;
-        currentParagraph.style.textAlign = 'left';
-        textDisplay.appendChild(currentParagraph);
-    }
-
-    let i = 0;
-    let interval = setInterval(() => {
-        if (i < text.length) {
-            currentParagraph.innerHTML += text.charAt(i);
-            i++;
-        } else {
-            clearInterval(interval);
-            if (linefeed === 1) {
-                currentParagraph = null; // 次のテキストブロックのために現在の段落をリセット
-            }
-            if (typeof callback === 'function') {
-                callback(); // コールバックが関数である場合のみ呼び出す
-            }
+    function displayTextWithDelay(text, color, speed, linefeed, backgroundImage, callback) {
+        if (backgroundImage) {
+            updateBackground(backgroundImage);
         }
-    }, speed);
-}
+    
+        if (linefeed === 1 || !currentParagraph) {
+            currentParagraph = document.createElement('p');
+            currentParagraph.style.color = color;
+            currentParagraph.style.textAlign = 'left';
+            textDisplay.appendChild(currentParagraph);
+        }
+    
+        let i = 0;
+        let interval = setInterval(() => {
+            if (i < text.length) {
+                currentParagraph.innerHTML += text.charAt(i);
+                i++;
+            } else {
+                clearInterval(interval);
+                if (linefeed === 1) {
+                    currentParagraph = null;
+                }
+                if (typeof callback === 'function') {
+                    callback();
+                }
+    
+                // currentParagraphがnullでないことを確認
+                if (currentParagraph) {
+                    currentParagraph.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }
+            }
+        }, speed);
+    }
+    
+    
 
 async function processJSON() {
     for (; currentIndex < jsonData.length; currentIndex++) {
         const item = jsonData[currentIndex];
         await new Promise(resolve => displayTextWithDelay(item.text, item.color, item.speed, item.linefeed, item['background-image'], resolve));
 
-        if (item.linefeed === 1) {
+        if (item.wait === 1) {
             await new Promise(resolve => waitForUserInput(resolve));
         }
     }
