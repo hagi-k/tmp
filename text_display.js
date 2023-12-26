@@ -1,121 +1,121 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const textDisplay = document.getElementById('textDisplay');
     textDisplay.style.position = 'relative'; // Ensure textDisplay is above background
     textDisplay.style.zIndex = '10'; // Higher zIndex to keep text in front
     textDisplay.style.textAlign = 'left'; // Set text alignment to left
 
     let jsonData = [
-    {
-		"text": "　",
-		"linefeed": 1,
-		"color": "#000",
-		"speed": 10,
-		"wait": 0,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-    {
-		"text": "さざ波一つない、平坦な水面。ところどころで白い水煙がゆらめいていた。",
-		"linefeed": 1,
-		"color": "#048",
-		"speed": 10,
-		"wait": 1,
-		"background-image": "p1.webp",
-		"bgm": "",
-		"se": ""
-	},
-    {
-		"text": "　",
-		"linefeed": 1,
-		"color": "#000",
-		"speed": 0,
-		"wait": 0,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "その中心が、ゆっくりと、盛り上がってきた。水中から何かが出てきているのではなく、液体そのものが上昇しているのだ。それは見上げるほどの高さになると、ぷるぷると震え始めた。飛沫しぶきが迸ほとばしった。",
-		"linefeed": 1,
-		"color": "#000",
-		"speed": 10,
-		"wait": 1,
-		"background-image": "p2.webp",
-		"bgm": "",
-		"se": ""
-	},
-    {
-		"text": "　",
-		"linefeed": 1,
-		"color": "#000",
-		"speed": 10,
-		"wait": 0,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "僕は既に知っていた。",
-		"linefeed": 1,
-		"color": "#000",
-		"speed": 200,
-		"wait": 1,
-		"background-image": "p1.webp",
-		"bgm": "",
-		"se": ""
-	},
-    {
-		"text": "　",
-		"linefeed": 1,
-		"color": "#000",
-		"speed": 10,
-		"wait": 0,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "そこに現れる",
-		"linefeed": 0,
-		"color": "#000",
-		"speed": 30,
-		"wait": 0,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "美少女",
-		"linefeed": 0,
-		"color": "#f00",
-		"speed": 400,
-		"wait": 0,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "の姿を。",
-		"linefeed": 0,
-		"color": "#000",
-		"speed": 400,
-		"wait": 0,
-		"background-image": "p3.png",
-		"bgm": "",
-		"se": ""
-	},
-	{
-		"text": "　",
-		"linefeed": 1,
-		"color": "#000;",
-		"speed": 400,
-		"wait": 0,
-		"background-image": "",
-		"bgm": "",
-		"se": ""
-	}
-];
+        {
+            "text": "　",
+            "linefeed": 1,
+            "color": "#000",
+            "speed": 10,
+            "wait": 0,
+            "background-image": "",
+            "bgm": "",
+            "se": ""
+        },
+        {
+            "text": "さざ波一つない、平坦な水面。ところどころで白い水煙がゆらめいていた。",
+            "linefeed": 1,
+            "color": "#048",
+            "speed": 10,
+            "wait": 1,
+            "background-image": "p1.webp",
+            "bgm": "",
+            "se": ""
+        },
+        {
+            "text": "　",
+            "linefeed": 1,
+            "color": "#000",
+            "speed": 0,
+            "wait": 0,
+            "background-image": "",
+            "bgm": "",
+            "se": ""
+        },
+        {
+            "text": "その中心が、ゆっくりと、盛り上がってきた。水中から何かが出てきているのではなく、液体そのものが上昇しているのだ。それは見上げるほどの高さになると、ぷるぷると震え始めた。飛沫しぶきが迸ほとばしった。",
+            "linefeed": 1,
+            "color": "#000",
+            "speed": 10,
+            "wait": 1,
+            "background-image": "p2.webp",
+            "bgm": "",
+            "se": ""
+        },
+        {
+            "text": "　",
+            "linefeed": 1,
+            "color": "#000",
+            "speed": 10,
+            "wait": 0,
+            "background-image": "",
+            "bgm": "",
+            "se": ""
+        },
+        {
+            "text": "僕は既に知っていた。",
+            "linefeed": 1,
+            "color": "#000",
+            "speed": 200,
+            "wait": 1,
+            "background-image": "p1.webp",
+            "bgm": "",
+            "se": ""
+        },
+        {
+            "text": "　",
+            "linefeed": 1,
+            "color": "#000",
+            "speed": 10,
+            "wait": 0,
+            "background-image": "",
+            "bgm": "",
+            "se": ""
+        },
+        {
+            "text": "そこに現れる",
+            "linefeed": 0,
+            "color": "#000",
+            "speed": 30,
+            "wait": 0,
+            "background-image": "",
+            "bgm": "",
+            "se": ""
+        },
+        {
+            "text": "美少女",
+            "linefeed": 0,
+            "color": "#f00",
+            "speed": 400,
+            "wait": 0,
+            "background-image": "",
+            "bgm": "",
+            "se": ""
+        },
+        {
+            "text": "の姿を。",
+            "linefeed": 0,
+            "color": "#000",
+            "speed": 400,
+            "wait": 0,
+            "background-image": "p3.png",
+            "bgm": "",
+            "se": ""
+        },
+        {
+            "text": "　",
+            "linefeed": 1,
+            "color": "#000;",
+            "speed": 400,
+            "wait": 0,
+            "background-image": "",
+            "bgm": "",
+            "se": ""
+        }
+    ];
 
     let currentIndex = 0;
     let backgroundIndex = 0;
@@ -171,12 +171,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const promptIndicator = document.getElementById('promptIndicator');
         promptIndicator.style.display = 'block';
         promptIndicator.classList.add('fade-in-out'); // Fade in-out animation
-    
+
         // テキスト表示エリアを一番下までスクロール
         textDisplay.scrollTop = textDisplay.scrollHeight;
     }
-    
-    
+
+
     function hidePromptIndicator() {
         const promptIndicator = document.getElementById('promptIndicator');
         promptIndicator.classList.remove('fade-in-out'); // Stop animation
@@ -201,21 +201,21 @@ document.addEventListener('DOMContentLoaded', function() {
         if (backgroundImage) {
             updateBackground(backgroundImage);
         }
-    
+
         if (linefeed === 1 || !currentParagraph) {
             currentParagraph = document.createElement('p');
             currentParagraph.style.color = color;
             currentParagraph.style.textAlign = 'left';
             textDisplay.appendChild(currentParagraph);
         }
-    
+
         let i = 0;
-        let span = createColoredSpan("", color); // 空のスパンを作成
-        currentParagraph.appendChild(span); // スパンを段落に追加
-    
+        let span = createColoredSpan("", color); // 空spanを作成
+        currentParagraph.appendChild(span); // spanを段落に追加
+
         let interval = setInterval(() => {
             if (i < text.length) {
-                span.innerHTML += text.charAt(i); // スパンにテキストを追加
+                span.innerHTML += text.charAt(i); // spanにテキストを追加
                 i++;
             } else {
                 clearInterval(interval);
@@ -231,21 +231,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, speed);
     }
-    
-    
 
-async function processJSON() {
-    for (; currentIndex < jsonData.length; currentIndex++) {
-        const item = jsonData[currentIndex];
-        await new Promise(resolve => displayTextWithDelay(item.text, item.color, item.speed, item.linefeed, item['background-image'], resolve));
+    async function processJSON() {
+        for (; currentIndex < jsonData.length; currentIndex++) {
+            const item = jsonData[currentIndex];
+            await new Promise(resolve => displayTextWithDelay(item.text, item.color, item.speed, item.linefeed, item['background-image'], resolve));
 
-        if (item.wait === 1) {
-            await new Promise(resolve => waitForUserInput(resolve));
+            if (item.wait === 1) {
+                await new Promise(resolve => waitForUserInput(resolve));
+            }
         }
     }
-}
 
-processJSON();
+    processJSON();
 
 
 
