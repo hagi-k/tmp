@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {
 		"text": "　",
 		"linefeed": 1,
-		"color": "#000;",
+		"color": "#000",
 		"speed": 10,
 		"wait": 0,
 		"background-image": "",
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {
 		"text": "さざ波一つない、平坦な水面。ところどころで白い水煙がゆらめいていた。",
 		"linefeed": 1,
-		"color": "#000;",
+		"color": "#048",
 		"speed": 10,
 		"wait": 1,
 		"background-image": "p1.webp",
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {
 		"text": "　",
 		"linefeed": 1,
-		"color": "#000;",
+		"color": "#000",
 		"speed": 0,
 		"wait": 0,
 		"background-image": "",
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	{
 		"text": "その中心が、ゆっくりと、盛り上がってきた。水中から何かが出てきているのではなく、液体そのものが上昇しているのだ。それは見上げるほどの高さになると、ぷるぷると震え始めた。飛沫しぶきが迸ほとばしった。",
 		"linefeed": 1,
-		"color": "#000;",
+		"color": "#000",
 		"speed": 10,
 		"wait": 1,
 		"background-image": "p2.webp",
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {
 		"text": "　",
 		"linefeed": 1,
-		"color": "#000;",
+		"color": "#000",
 		"speed": 10,
 		"wait": 0,
 		"background-image": "",
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	{
 		"text": "僕は既に知っていた。",
 		"linefeed": 1,
-		"color": "#000;",
+		"color": "#000",
 		"speed": 200,
 		"wait": 1,
 		"background-image": "p1.webp",
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {
 		"text": "　",
 		"linefeed": 1,
-		"color": "#000;",
+		"color": "#000",
 		"speed": 10,
 		"wait": 0,
 		"background-image": "",
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	{
 		"text": "そこに現れる",
 		"linefeed": 0,
-		"color": "#000;",
+		"color": "#000",
 		"speed": 30,
 		"wait": 0,
 		"background-image": "",
@@ -88,20 +88,20 @@ document.addEventListener('DOMContentLoaded', function() {
 	{
 		"text": "美少女",
 		"linefeed": 0,
-		"color": "#f00;",
+		"color": "#f00",
 		"speed": 400,
 		"wait": 0,
-		"background-image": "p3.png",
+		"background-image": "",
 		"bgm": "",
 		"se": ""
 	},
 	{
 		"text": "の姿を。",
 		"linefeed": 0,
-		"color": "#000;",
+		"color": "#000",
 		"speed": 400,
 		"wait": 0,
-		"background-image": "",
+		"background-image": "p3.png",
 		"bgm": "",
 		"se": ""
 	},
@@ -210,9 +210,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     
         let i = 0;
+        let span = createColoredSpan("", color); // 空のスパンを作成
+        currentParagraph.appendChild(span); // スパンを段落に追加
+    
         let interval = setInterval(() => {
             if (i < text.length) {
-                currentParagraph.innerHTML += text.charAt(i);
+                span.innerHTML += text.charAt(i); // スパンにテキストを追加
                 i++;
             } else {
                 clearInterval(interval);
@@ -222,8 +225,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (typeof callback === 'function') {
                     callback();
                 }
-    
-                // currentParagraphがnullでないことを確認
                 if (currentParagraph) {
                     currentParagraph.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 }
