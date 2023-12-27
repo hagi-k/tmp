@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>4x4 ジグソーパズル</title>
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 50px);
+    grid-gap: 5px;
+    margin-bottom: 20px;
+  }
+
+  .cell {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #000;
+    position: relative;
+  }
+
+  .piece {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    border: 1px solid red;
+    background-color: lightgray;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <div id="grid" class="grid">
+    <!-- 4x4 グリッドセル -->
+    <!-- この部分はJavaScriptで動的に生成されます -->
+  </div>
+  <div id="pieces">
+    <!-- パズルピース -->
+    <!-- この部分はJavaScriptで動的に生成されます -->
+  </div>
+
+<script>
+// JavaScriptコードはここに記述
+</script>
+</body>
+</html>
