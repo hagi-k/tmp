@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "color": "#048",
             "speed": 10,
             "wait": 1,
-            "background-image": "p1.webp",
+            "background-image": "https://kou-ryaku.net/test/p1.webp",
             "bgm": "",
             "se": ""
         },
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "color": "#000",
             "speed": 10,
             "wait": 1,
-            "background-image": "p2.webp",
+            "background-image": "https://kou-ryaku.net/test/p2.webp",
             "bgm": "",
             "se": ""
         },
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "color": "#000",
             "speed": 200,
             "wait": 1,
-            "background-image": "p1.webp",
+            "background-image": "https://kou-ryaku.net/test/p1.webp",
             "bgm": "",
             "se": ""
         },
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "color": "#000",
             "speed": 400,
             "wait": 0,
-            "background-image": "p3.png",
+            "background-image": "https://kou-ryaku.net/test/p3.png",
             "bgm": "",
             "se": ""
         },
