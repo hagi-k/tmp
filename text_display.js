@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "color": "#000",
             "speed": 400,
             "wait": 0,
-            "background-image": "https://kou-ryaku.net/test/p3.png",
+            "background-image": "https://kou-ryaku.net/test/p3.webp",
             "bgm": "",
             "se": ""
         },
