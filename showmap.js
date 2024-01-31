@@ -22,11 +22,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // マップのビューを画像の範囲に合わせる
     map.setMaxBounds(bounds);
 
-    // 画像の中央にピンを配置
-    var centerPoint = new L.Point(w / 2, h / 2);
-    var centerLatLng = map.unproject(centerPoint, map.getMaxZoom()-1);
-    var marker = L.marker(centerLatLng).addTo(map);
+    // ピンの位置を管理するオブジェクトの配列
+    var pins = [
+        { id: 'center', point: new L.Point(w / 2, h / 2), url: 'https://example.com' },
+        { id: 'specific', point: new L.Point(w * 0.2, h * 0.2), url: 'https://example.com' }
+        // 他のピンの情報を追加できます
+    ];
 
-    // ピンにバルーンヘルプを設定
-    marker.bindPopup('<a href="https://example.com" target="_blank">リンク</a>');
+    // 各ピンをマップに配置
+    pins.forEach(function(pin) {
+        var latLng = map.unproject(pin.point, map.getMaxZoom()-1);
+        var marker = L.marker(latLng).addTo(map);
+        marker.bindPopup(`<a href="${pin.url}" target="_blank">リンク</a>`);
+    });
 });
