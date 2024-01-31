@@ -69,9 +69,17 @@ pins.forEach(function(pin) {
     var images = [
         {
             url: 'http://kou-ryaku.net/test/character_cthulhu_hastur.png',
-            point: new L.Point(w * 0.2, h * 0.3),
+            point: new L.Point(w * 0.25, h * 0.35),
             size: [60, 60],
             popupContent: 'こんなところにハスター！<br />',
+            link: 'https://example.com',
+            linkText: '詳細を見る'  // ポップアップのリンクテキスト
+        },
+        {
+            url: 'http://kou-ryaku.net/test/pin_anime_07.png',
+            point: new L.Point(w * 0.4, h * 0.3),
+            size: [70, 70],
+            popupContent: 'きになる場所<br />',
             link: 'https://example.com',
             linkText: '詳細を見る'  // ポップアップのリンクテキスト
         }
