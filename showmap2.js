@@ -63,9 +63,34 @@ var pins = [
         // 他の画像情報を追加できます
     ];
 
-    images.forEach(function(img) {
-        // ...画像を配置するコード...
+images.forEach(function(img) {
+    // 画像の位置とサイズから境界を計算
+    var latLng = map.unproject(img.point, map.getMaxZoom()-1);
+    var imageBounds = [latLng, map.unproject([img.point.x + img.size[0], img.point.y + img.size[1]], map.getMaxZoom()-1)];
+
+    // 画像レイヤーを作成し、マップに追加
+    var imageLayer = L.imageOverlay(img.url, imageBounds).addTo(map);
+
+    // 透明なdiv要素を使用したカスタムアイコンを作成
+    var invisibleIcon = L.divIcon({
+        className: 'invisible-div',
+        iconSize: L.point(img.size[0], img.size[1]),
+        html: '<div style="width: 100%; height: 100%;"></div>'
     });
+
+    // 画像の中央に透明なマーカーを配置
+    var imageCenter = map.unproject([img.point.x + img.size[0] / 2, img.point.y + img.size[1] / 2], map.getMaxZoom()-1);
+    var invisibleMarker = L.marker(imageCenter, {
+        icon: invisibleIcon,
+        popupAnchor: [0, -(img.size[1] / 2 + img.size[1] * 0.1)] // ポップアップのアンカーポイントを画像の上部から10％の位置に調整
+    }).addTo(map);
+
+    // ポップアップの内容を作成
+    var popupContent = `${img.popupContent}<a href="${img.link}" target="_blank">${img.linkText}</a>`;
+
+    // 透明なマーカーにポップアップをバインド
+    invisibleMarker.bindPopup(popupContent);
+});
 
     // モーダル関連のコード
     var modal = document.getElementById('modal');
