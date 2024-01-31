@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>インタラクティブ地図</title>
+    <style>
+        #map-container {
+            width: 100%;
+            height: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+        .pin {
+            position: absolute;
+            cursor: pointer;
+        }
+        .balloon {
+            position: absolute;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="map-container">
+        <img id="map-image" src="http://kou-ryaku.net/test/arkham.jpg" alt="Map" />
+        <!-- ピンとバルーンヘルプの要素はJavaScriptで追加されます -->
+    </div>
+
+    <script src="your-script.js"></script>
+</body>
+</html>
