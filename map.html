@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>カスタムJPGマップ</title>
+    <meta name="viewport" content="width=480">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         #map {
@@ -12,6 +13,18 @@
     border: none;
     box-shadow: none;
     }
+    
+    body {  
+  font-family: "Helvetica Neue",
+    Arial,
+    "Hiragino Kaku Gothic ProN",
+    "Hiragino Sans",
+    Meiryo,
+    sans-serif;
+  font-size:1.2em;
+  line-height:1.4em;
+}
+    
 /* モーダルウィンドウのスタイル */
 .pin-modal {
     display: none;
@@ -67,6 +80,8 @@
 
     </style>
 </head>
+
+
 <body>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -88,5 +103,6 @@
 	<li><a href="" id="id03">すみっ公園</a></li>
 	<li><a href="" id="id04">はじっ公園</a></li>
 </ul>
+v2
 </body>
 </html>
