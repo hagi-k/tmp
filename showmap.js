@@ -34,7 +34,7 @@ var pins = [
         url: 'https://example.com',
         linkText: '中央公園',
         image: 'http://kou-ryaku.net/test/id01.jpg',
-        html: '<h2>中央公園</h2>あれこれなんだかんだ起こります<br /><a href="">リンク</a>',
+        html: '<h2>中央公園</h2>あれこれなんだかんだ起こります<br /><b>➡<a href="">リンク</a></b>',
         color: 'red' // ピンの色
     },
     {
@@ -43,7 +43,7 @@ var pins = [
         url: 'https://www.miskatonic-university.org/',
         linkText: 'ミスカトニック大学',
         image: 'https://www.miskatonic-university.org/wp-content/uploads/2020/10/cropped-2011-header-Main-1.png',
-        html: '<h2>ミスカトニック大学</h2>この場所で云々<br /><a href="">リンク</a>',
+        html: '<h2>ミスカトニック大学</h2>この場所で云々<br /><b>➡<a href="">リンク</a></b>',
         color: 'blue' // ピンの色
     },
     {
@@ -51,8 +51,8 @@ var pins = [
         point: new L.Point(w * 0.951, h * 0.96),
         url: 'https://www.miskatonic-university.org/',
         linkText: 'すみっ公園',
-        image: 'http://kou-ryaku.net/test/id01.jpg',
-        html: '<h2>すみっ公園</h2>この場所で云々<br /><a href="">リンク</a>',
+        image: 'http://kou-ryaku.net/test/id03.jpg',
+        html: '<h2>すみっ公園</h2>この場所で云々<br /><b>➡<a href="">リンク</a></b>',
         color: 'blue' // ピンの色
     },
     {
@@ -60,8 +60,8 @@ var pins = [
         point: new L.Point(w * 0.1, h * 0.1),
         url: 'https://www.miskatonic-university.org/',
         linkText: 'はじっ公園',
-        image: 'http://kou-ryaku.net/test/id01.jpg',
-        html: '<h2>はじっ公園</h2>この場所で云々<br /><a href="">リンク</a>',
+        image: 'http://kou-ryaku.net/test/id04.png',
+        html: '<h2>はじっ公園</h2>この場所で云々<br /><b>➡<a href="">リンク</a></b>',
         color: 'blue' // ピンの色
     }
 ];
