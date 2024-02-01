@@ -1,108 +1,113 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>カスタムJPGマップ</title>
+    <title>カスタムマップ</title>
     <meta name="viewport" content="width=480">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
     <style>
-        #map {
-            height: 600px;
+    #map {
+                height: 550px;
+            }
+            .invisible-marker {
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
         }
-        .invisible-marker {
-    background-color: transparent;
-    border: none;
-    box-shadow: none;
+        
+        body {  
+      font-family: "Helvetica Neue",
+        Arial,
+        "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans",
+        Meiryo,
+        sans-serif;
+      font-size:1.2em;
+      line-height:1.4em;
+    }
+        
+    /* モーダルウィンドウのスタイル */
+    .pin-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 3%;
+        top:320px;
+        bottom: 0;
+        width: 94%;
+        height: 220px;
+        background-color: rgba(0, 0, 0, 65%); /* 半透明 */
     }
     
-    body {  
-  font-family: "Helvetica Neue",
-    Arial,
-    "Hiragino Kaku Gothic ProN",
-    "Hiragino Sans",
-    Meiryo,
-    sans-serif;
-  font-size:1.2em;
-  line-height:1.4em;
-}
+    .pin-modal-content {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
     
-/* モーダルウィンドウのスタイル */
-.pin-modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 10%;
-    top:351px;
-    bottom: 0;
-    width: 80%;
-    height: 19%;
-    background-color: rgba(0, 0, 0, 0.7); /* 半透明 */
-}
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 55px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+    }
+    
+    .pin-modal-body {
+        display: flex;
+        height: 100%;
+    }
+    
+    #pin-modal-image {
+        max-width: 30%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    
+    #pin-modal-html {
+        padding: 10px;
+        color: white;
+        overflow-y: auto;
+    }
 
-.pin-modal-content {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-}
-
-.pin-modal-body {
-    display: flex;
-    height: 100%;
-}
-
-#pin-modal-image {
-    max-width: 30%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-#pin-modal-html {
-    padding: 10px;
-    color: white;
-    overflow-y: auto;
-}
-
-
-#pin-modal a:link { color:#fff; }
-#pin-modal a:hover { color:#fff; background-color:#ff0; }
-#pin-modal a:visited {color:#fff; }
-
-
-
+    #pin-modal h2 { font-size: 24px; margin:5px 5px 5px 0;}    
+    #pin-modal a:link { color:#fff; }
+    #pin-modal a:hover { color:#fff; background-color:#ff0; }
+    #pin-modal a:visited {color:#fff; }
     </style>
 </head>
 
-
 <body>
-    <div id="map"></div>
+    <div id="map">
+    </div>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="showmap.js"></script>
     <!-- モーダルウィンドウ -->
     <div id="pin-modal" class="pin-modal">
         <div class="pin-modal-content">
-            <span class="close">&times;</span>
+            <span class="close">×</span>
             <div class="pin-modal-body">
-                <img src="" id="pin-modal-image" alt="Pin Image" />
-                <div id="pin-modal-html"></div>
+                <img src="" id="pin-modal-image" alt="Pin Image">
+                <div id="pin-modal-html">
+                </div>
             </div>
         </div>
     </div>
+    <ul>
+        <li>
+            <a href="" id="id001">中央公園</a>
+        </li>
+        <li>
+            <a href="" id="id002">ミスカトニック大学</a>
+        </li>
+        <li>
+            <a href="" id="id003">すみっ公園</a>
+        </li>
+        <li>
+            <a href="" id="id004">はじっ公園</a>
+        </li>
+    </ul>v2</body>
 
-<ul>
-<li><a href='' id='id001'>中央公園</a></li>
-<li><a href='' id='id002'>ミスカトニック大学</a></li>
-<li><a href='' id='id003'>すみっ公園</a></li>
-<li><a href='' id='id004'>はじっ公園</a></li>
-</ul>
-v2
-</body>
 </html>
