@@ -63,10 +63,12 @@ pins.forEach(function(pin) {
 });
 
 
+
 // ラジオボタンのイベントハンドラを設定
 document.querySelectorAll('input[type=radio][name="filter"]').forEach(function(radio) {
     radio.addEventListener('change', function() {
         filterPins(this.value);
+        map.setZoom(3);
     });
 });
 
@@ -83,8 +85,6 @@ function filterPins(color) {
 }
 
 
-
-
 // モーダルを開く
 function openPinModal(imageSrc, htmlContent) {
     document.getElementById('pin-modal-image').src = imageSrc;
@@ -99,6 +99,7 @@ document.querySelector('.pin-modal .close').onclick = function() {
 };
 
 
+// 画像表示
     var images = [
         {
         	id: 'image01',
@@ -119,7 +120,6 @@ document.querySelector('.pin-modal .close').onclick = function() {
             linkText: '詳細を見る'  // ポップアップのリンクテキスト
         }
     ];
-
 
     // 各画像をマップに配置
     images.forEach(function(img) {
