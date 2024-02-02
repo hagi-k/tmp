@@ -6,16 +6,33 @@
     <meta name="viewport" content="width=480">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
     <style>
-    #map {
-                height: 550px;
-            }
-            .invisible-marker {
+
+#map {
+    height: 550px;
+    position: relative;
+}
+
+#map::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('http://kou-ryaku.net/test/bg_arkham.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4; /* 透明度を設定 */
+    z-index: 1;
+}
+
+    .invisible-marker {
         background-color: transparent;
         border: none;
         box-shadow: none;
-        }
+    }
         
-        body {  
+    body {  
       font-family: "Helvetica Neue",
         Arial,
         "Hiragino Kaku Gothic ProN",
