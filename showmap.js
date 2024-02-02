@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+// マップ初期化
 //    var w = 1402*2;
 //    var h = 1602*2;
     var w = 1314*2;
@@ -13,21 +14,20 @@ document.addEventListener('DOMContentLoaded', function() {
         crs: L.CRS.Simple
     });
 
-    // 画像の寸法
-
     var southWest = map.unproject([0, h], map.getMaxZoom()-1);
     var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
     var bounds = new L.LatLngBounds(southWest, northEast);
+
 
 //    L.imageOverlay('http://kou-ryaku.net/test/nanafuse.png', bounds).addTo(map);
     L.imageOverlay('http://kou-ryaku.net/test/arkham.jpg', bounds).addTo(map);
     map.setMaxBounds(bounds);
 
-    var markers = {}; // マーカーを保存するオブジェクト
-	var pinData = {}; // ピンを保存するオブジェクト
+    var markers = {};
+	var pinData = {};
 
-var pins = [
-    { id:'id001', point: new L.Point(w*0.5,h*0.5), url: '""', linkText: '中央公園', image: 'https://kou-ryaku.net/test/pic/id01.jpg', html: '<h2>中央公園</h2>あれこれなんだかんだ起こります<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g302304003335/"">リンク</a></b>', color: 'red' },
+    var pins = [
+    { id:'id001', point: new L.Point(w*0.5,h*0.5), url: '"', linkText: '中央公園', image: 'https://kou-ryaku.net/test/pic/id01.jpg', html: '<h2>中央公園</h2>あれこれなんだかんだ起こります<br /><b>➡<a href="https://store.kadokawa.co.jp/shop/g/g302304003335/">リンク</a></b>', color: 'red' },
     { id:'id002', point: new L.Point(w*0.651,h*0.66), url: '""', linkText: 'ミスカトニック大学', image: 'https://kou-ryaku.net/test/pic/id02.jpg', html: '<h2>ミスカトニック大学</h2>この場所で云々この場所で云々<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g322302000281/"">リンク</a></b>', color: 'red' },
     { id:'id003', point: new L.Point(w*0.1,h*0.1), url: '""', linkText: 'すみっ公園', image: 'https://kou-ryaku.net/test/pic/id03.jpg', html: '<h2>すみっ公園</h2>すみっこかわいい<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g301411001415/"">リンク</a></b>', color: 'red' },
     { id:'id004', point: new L.Point(w*0.951,h*0.96), url: '""', linkText: 'はじっ公園', image: 'https://kou-ryaku.net/test/pic/id04.png', html: '<h2>はじっ公園</h2>下側だとモーダルに隠れちゃうので、モーダル上に表示するとか考えた方がいいかも<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g302109001482"">リンク</a></b>', color: 'red' },
@@ -39,18 +39,18 @@ var pins = [
     { id:'id010', point: new L.Point(w*0.368255247657614,h*0.637626272536938), url: '""', linkText: 'id010', image: 'https://kou-ryaku.net/test/pic/idxx.jpg', html: '<h2>id010</h2>ああああ<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g302307002478/"">リンク</a></b>', color: 'blue' },
     { id:'id011', point: new L.Point(w*0.402034789859934,h*0.550873181758939), url: '""', linkText: 'id011', image: 'https://kou-ryaku.net/test/pic/idxx.jpg', html: '<h2>id011</h2>ああああ<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g302307002478/"">リンク</a></b>', color: 'blue' },
     { id:'id012', point: new L.Point(w*0.966344613364596,h*0.545892523947111), url: '""', linkText: 'id012', image: 'https://kou-ryaku.net/test/pic/idxx.jpg', html: '<h2>id012</h2>ああああ<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g302307002478/"">リンク</a></b>', color: 'blue' }
-];
+    ];
 
-// 各ピンをマップに配置
+// ピンをマップに配置
 pins.forEach(function(pin) {
     var latLng = map.unproject(pin.point, map.getMaxZoom()-1);
 
-    // カスタムアイコンの設定
+    // カスタムピン
     var customIcon = L.icon({
         iconUrl: `https://kou-ryaku.net/test/pin/${pin.color}.png`, // 色に基づいたアイコンのURL
         iconSize: [56, 56], // アイコンのサイズ
-        iconAnchor: [17.5, 56], // アイコンのアンカーポイント
-        popupAnchor: [12, -38] // ポップアップのアンカーポイント
+        iconAnchor: [27, 47], // アイコンのアンカーポイント
+        popupAnchor: [2, -30] // ポップアップのアンカーポイント
     });
 
     var marker = L.marker(latLng, {icon: customIcon}).addTo(map);
@@ -61,7 +61,6 @@ pins.forEach(function(pin) {
     markers[pin.id] = marker;
     pinData[pin.id] = { image: pin.image, html: pin.html, color: pin.color };
 });
-
 
 
 // ラジオボタンのイベントハンドラを設定
