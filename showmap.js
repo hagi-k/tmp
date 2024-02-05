@@ -18,8 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
     var bounds = new L.LatLngBounds(southWest, northEast);
 
-
-//    L.imageOverlay('http://kou-ryaku.net/test/nanafuse.png', bounds).addTo(map);
     L.imageOverlay('http://kou-ryaku.net/test/arkham.jpg', bounds).addTo(map);
     map.setMaxBounds(bounds);
 
@@ -41,64 +39,86 @@ document.addEventListener('DOMContentLoaded', function() {
     { id:'id012', point: new L.Point(w*0.966344613364596,h*0.545892523947111), url: '""', linkText: 'id012', image: 'https://kou-ryaku.net/test/pic/idxx.jpg', html: '<h2>id012</h2>ああああ<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g302307002478/"">リンク</a></b>', color: 'blue' }
     ];
 
-// ピンをマップに配置
-pins.forEach(function(pin) {
-    var latLng = map.unproject(pin.point, map.getMaxZoom()-1);
+    // ピンをマップに配置
+    pins.forEach(function(pin) {
+        var latLng = map.unproject(pin.point, map.getMaxZoom()-1);
 
-    // カスタムピン
-    var customIcon = L.icon({
-        iconUrl: `https://kou-ryaku.net/test/pin/${pin.color}.png`, // 色に基づいたアイコンのURL
-        iconSize: [56, 56], // アイコンのサイズ
-        iconAnchor: [27, 47], // アイコンのアンカーポイント
-        popupAnchor: [2, -30] // ポップアップのアンカーポイント
+        // カスタムピン
+        var customIcon = L.icon({
+            iconUrl: `https://kou-ryaku.net/test/pin/${pin.color}.png`, // 色に基づいたアイコンのURL
+            iconSize: [56, 56], // アイコンのサイズ
+            iconAnchor: [27, 47], // アイコンのアンカーポイント
+            popupAnchor: [2, -30] // ポップアップのアンカーポイント
+        });
+
+        var marker = L.marker(latLng, {icon: customIcon}).addTo(map);
+        marker.bindPopup(`${pin.linkText}`);
+        marker.on('click', function() {
+            openPinModal(pin.image, pin.html); // ピンクリック時にモーダルを開く
+        });
+        markers[pin.id] = marker;
+        pinData[pin.id] = { image: pin.image, html: pin.html, color: pin.color };
     });
 
-    var marker = L.marker(latLng, {icon: customIcon}).addTo(map);
-    marker.bindPopup(`${pin.linkText}`);
-    marker.on('click', function() {
-        openPinModal(pin.image, pin.html); // ピンクリック時にモーダルを開く
+
+        // URLからクエリパラメータを取得
+        var queryParams = new URLSearchParams(window.location.search);
+        var id = queryParams.get('id');
+        var zoom = queryParams.get('zoom');
+    
+        // マップの初期化後に実行する関数
+        initializeMap();
+    
+        function initializeMap() {
+            // 指定されたIDのピンにズーム
+            if (id && markers['id' + id]) {
+                var marker = markers['id' + id];
+                map.setView(marker.getLatLng(), zoom ? parseInt(zoom) : 3);
+                marker.openPopup();
+    
+                // モーダルも表示
+                if (pinData['id' + id]) {
+                    openPinModal(pinData['id' + id].image, pinData['id' + id].html);
+                }
+            }
+        }
+
+    // ラジオボタン
+    document.querySelectorAll('input[type=radio][name="filter"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            filterPins(this.value);
+            map.setZoom(3);
+        });
     });
-    markers[pin.id] = marker;
-    pinData[pin.id] = { image: pin.image, html: pin.html, color: pin.color };
-});
 
-
-// ラジオボタンのイベントハンドラを設定
-document.querySelectorAll('input[type=radio][name="filter"]').forEach(function(radio) {
-    radio.addEventListener('change', function() {
-        filterPins(this.value);
-        map.setZoom(3);
-    });
-});
-
-// ピンをフィルタリングする関数
-function filterPins(color) {
-    for (var id in markers) {
-        var marker = markers[id];
-        if (color === 'all' || pinData[id].color === color) {
-            marker.addTo(map);
-        } else {
-            marker.remove();
+    // ピンのフィルタリング
+    function filterPins(color) {
+        for (var id in markers) {
+            var marker = markers[id];
+            if (color === 'all' || pinData[id].color === color) {
+                marker.addTo(map);
+            } else {
+                marker.remove();
+            }
         }
     }
-}
 
 
-// モーダルを開く
-function openPinModal(imageSrc, htmlContent) {
-    document.getElementById('pin-modal-image').src = imageSrc;
-    document.getElementById('pin-modal-html').innerHTML = htmlContent;
-    document.getElementById('pin-modal').style.display = 'block';
-}
+    // モーダルを開く
+    function openPinModal(imageSrc, htmlContent) {
+        document.getElementById('pin-modal-image').src = imageSrc;
+        document.getElementById('pin-modal-html').innerHTML = htmlContent;
+        document.getElementById('pin-modal').style.display = 'block';
+    }
 
 
-// モーダルを閉じる
-document.querySelector('.pin-modal .close').onclick = function() {
-    document.getElementById('pin-modal').style.display = 'none';
-};
+    // モーダルを閉じる
+    document.querySelector('.pin-modal .close').onclick = function() {
+        document.getElementById('pin-modal').style.display = 'none';
+    };
 
 
-// 画像表示
+    // 画像表示
     var images = [
         {
         	id: 'image01',
@@ -128,34 +148,30 @@ document.querySelector('.pin-modal .close').onclick = function() {
     });
 
 
-// リンククリック時の挙動
-document.querySelectorAll('a').forEach(function(link) {
-    link.addEventListener('click', function(e) {
-        var id = this.getAttribute('id');
-        if (markers[id]) {
-            e.preventDefault();
-            var markerLatLng = markers[id].getLatLng();
+    // リンククリック時の挙動
+    document.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            var id = this.getAttribute('id');
+            if (markers[id]) {
+                e.preventDefault();
+                var markerLatLng = markers[id].getLatLng();
 
-            // 'Blue' が選択されている場合、'All' を選択
-            if (document.getElementById('btn-blue').checked) {
-                document.getElementById('btn-all').checked = true;
-                filterPins('all');
+                // 'Blue' が選択されている場合、'All' を選択
+                if (document.getElementById('btn-blue').checked) {
+                    document.getElementById('btn-all').checked = true;
+                    filterPins('all');
+                }
+
+                // 一時的にマップを縮小
+                map.setView(markerLatLng, map.getZoom());
+
+                // 0.2秒後に指定された箇所を拡大
+                setTimeout(function() {
+                    map.setView(markerLatLng, 5); // 目的のズームレベル
+                    openPinModal(pinData[id].image, pinData[id].html); // モーダルを開く
+                    markers[id].openPopup();
+                }, 200); // 0.2秒後に実行
             }
-
-            // 一時的にマップを縮小
-            map.setView(markerLatLng, map.getZoom());
-
-            // 0.2秒後に指定された箇所を拡大
-            setTimeout(function() {
-                map.setView(markerLatLng, 5); // 目的のズームレベル
-                openPinModal(pinData[id].image, pinData[id].html); // モーダルを開く
-                markers[id].openPopup();
-            }, 200); // 0.2秒後に実行
-        }
+        });
     });
-});
-
-
-
-
 });
