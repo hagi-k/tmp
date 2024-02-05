@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	var pinData = {};
 
     var pins = [
-    { id:'id001', point: new L.Point(w*0.5,h*0.5), url: '"', linkText: '中央公園', image: 'https://kou-ryaku.net/test/pic/id01.jpg', html: '<h2>中央公園</h2>あれこれなんだかんだ起こります<br /><b>➡<a href="https://store.kadokawa.co.jp/shop/g/g302304003335/">リンク</a></b>', color: 'red' },
+    { id:'id001', point: new L.Point(w*0.5,h*0.5), url: '"', linkText: '中央公園', image: 'https://kou-ryaku.net/test/pic/id01.jpg', html: '<h2>中央公園</h2>あれこれなんだかんだ起こります<br />あれこれなんだかんだ起こります<br />あれこれなんだかんだ起こります<br />あれこれなんだかんだ起こります<br />あれこれなんだかんだ起こります<br />なんだかんだ<br />ほげほげ<br />あれこれなんだかんだ起こります<br />なんだかんだ<br />ほげほげ<br />あれこれなんだかんだ起こります<br />なんだかんだ<br />ほげほげ<br /><b>➡<a href="https://store.kadokawa.co.jp/shop/g/g302304003335/">リンク</a></b>', color: 'red' },
     { id:'id002', point: new L.Point(w*0.651,h*0.66), url: '""', linkText: 'ミスカトニック大学', image: 'https://kou-ryaku.net/test/pic/id02.jpg', html: '<h2>ミスカトニック大学</h2>この場所で云々この場所で云々<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g322302000281/"">リンク</a></b>', color: 'red' },
     { id:'id003', point: new L.Point(w*0.1,h*0.1), url: '""', linkText: 'すみっ公園', image: 'https://kou-ryaku.net/test/pic/id03.jpg', html: '<h2>すみっ公園</h2>すみっこかわいい<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g301411001415/"">リンク</a></b>', color: 'red' },
     { id:'id004', point: new L.Point(w*0.951,h*0.96), url: '""', linkText: 'はじっ公園', image: 'https://kou-ryaku.net/test/pic/id04.png', html: '<h2>はじっ公園</h2>下側だとモーダルに隠れちゃうので、モーダル上に表示するとか考えた方がいいかも<br /><b>➡<a href=""https://store.kadokawa.co.jp/shop/g/g302109001482"">リンク</a></b>', color: 'red' },
