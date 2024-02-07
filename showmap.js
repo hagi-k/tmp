@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var northEast = map.unproject([w, 0], map.getMaxZoom()-1);
     var bounds = new L.LatLngBounds(southWest, northEast);
 
+
+//    L.imageOverlay('http://kou-ryaku.net/test/nanafuse.png', bounds).addTo(map);
     L.imageOverlay('http://kou-ryaku.net/test/arkham.jpg', bounds).addTo(map);
     map.setMaxBounds(bounds);
 
@@ -54,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var marker = L.marker(latLng, {icon: customIcon}).addTo(map);
         marker.bindPopup(`${pin.linkText}`);
         marker.on('click', function() {
-            openPinModal(pin.image, pin.html); // ピンクリック時にモーダルを開く
+            openPinModal(pin.image, pin.html, marker.getLatLng()); // ここでピンのLatLngを渡す
         });
         markers[pin.id] = marker;
         pinData[pin.id] = { image: pin.image, html: pin.html, color: pin.color };
@@ -105,10 +107,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // モーダルを開く
-    function openPinModal(imageSrc, htmlContent) {
+    function openPinModal(imageSrc, htmlContent, pinLatLng) {
+        var pinModal = document.getElementById('pin-modal');
+        pinModal.style.display = 'block';
+        pinModal.style.top = map.latLngToContainerPoint(pinLatLng).y > (map.getSize().y * 0.6) ? '20px' : '320px'; // ピンの位置に基づいてtopを設定
+    
         document.getElementById('pin-modal-image').src = imageSrc;
         document.getElementById('pin-modal-html').innerHTML = htmlContent;
-        document.getElementById('pin-modal').style.display = 'block';
     }
 
 
@@ -168,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 0.2秒後に指定された箇所を拡大
                 setTimeout(function() {
                     map.setView(markerLatLng, 5); // 目的のズームレベル
-                    openPinModal(pinData[id].image, pinData[id].html); // モーダルを開く
+                    openPinModal(pinData[id].image, pinData[id].html, markers[id].getLatLng()); // ここでピンのLatLngを渡しモーダルを開く
                     markers[id].openPopup();
                 }, 200); // 0.2秒後に実行
             }
