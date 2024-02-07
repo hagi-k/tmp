@@ -75,15 +75,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // 指定されたIDのピンにズーム
             if (id && markers['id' + id]) {
                 var marker = markers['id' + id];
-                map.setView(marker.getLatLng(), zoom ? parseInt(zoom) : 3);
+                var latLng = marker.getLatLng();
+                map.setView(latLng, zoom ? parseInt(zoom) : 3);
                 marker.openPopup();
-    
+        
                 // モーダルも表示
                 if (pinData['id' + id]) {
-                    openPinModal(pinData['id' + id].image, pinData['id' + id].html);
+                    openPinModal(pinData['id' + id].image, pinData['id' + id].html, latLng); // 正しいLatLngを渡す
                 }
             }
         }
+        
 
     // ラジオボタン
     document.querySelectorAll('input[type=radio][name="filter"]').forEach(function(radio) {
