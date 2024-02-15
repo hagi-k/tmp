@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>探索者の創造</title>
+    <meta name="viewport" content="width=480">
+    <meta charset="utf-8">
+    <style>
+/*
+        body{
+            background-image:url("sheepskin.jpg");
+            background-repeat: no-repeat;
+            background-position:50% 50%;
+            background-size:cover;
+        }
+*/
+        .table{
+            display: table;
+            border-collapse: collapse;
+        }
+        .table>div{
+            display: table-row;
+            text-align: center;
+        }
+        .table>div>div{
+            display: table-cell;
+            border: 1px solid #999999;
+            padding: 5px;
+        }
+        .table-r8{
+        border-radius: 10px;
+        border-spacing: 0;
+        border: none;
+        border-left: 1px solid #999999;
+        border-top: 1px solid #999999;
+        }
+        .table-r8 tr>*{
+        padding: 5px 10px;
+        border: none;
+        border-right: 1px solid #999999;
+        border-bottom: 1px solid #999999;
+        }
+        .table-r8 tr:first-child>*:first-child{
+            border-radius: 8px 0 0 0;
+        }
+        .table-r8 tr:first-child>*:last-child{
+            border-radius: 0 8px 0 0;
+        }
+        .table-r8 tr:last-child>*:first-child{
+            border-radius: 0 0 0 8px;
+        }
+        .table-r8 tr:last-child>*:last-child{
+            border-radius: 0 0 8px 0;
+        }
+
+        .mode-buttons input[type="radio"] {
+            display: none;
+        }
+
+        .tab {
+            display: block;
+            float: left;
+            width: calc(100%/3);
+            text-align: center;
+            padding: 1em 0;
+            background-color: rgba(0,0,0,0.1);
+            border-bottom: 3px solid #60C0F0;
+        }
+        .tab:hover {
+            opacity: 0.6;
+        }
+        .contents1,.contents2{
+        width: 49%;
+        }
+
+        .main{
+        display: flex;
+        }
+        .chart-container {
+        width: 40%;
+        position: absolute !important;
+        top: 80px;
+        left: 55% !important;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="mode-buttons">
+        <input type="radio" id="6th_rule" name="mode" checked>
+        <label for="6th_rule" class="tab">旧版ルール</label>
+
+        <input type="radio" id="7th_rule" name="mode">
+        <label for="7th_rule" class="tab">新版ルール</label>
+
+        <input type="radio" id="preset" name="mode">
+        <label for="preset" class="tab">プリセットNPC</label>
+    </div>
+
+    <div id="main">
+        <div id="6th" class="tab-contents" style="display:none;">
+            <button class="roll_all" data-rule="6th">Roll All</button>
+            <table class="table-r8">
+                <colgroup>
+                    <col width="230px">
+                    <col width="150px">
+                    <col width="90px">
+                </colgroup>
+                <tr>
+                    <th>能力名</th>
+                    <th>ダイス</th>
+                    <th>能力値</th>
+                </tr>
+                <tr>
+                    <td>STR（筋力）<br><button class="roll" data-param-id="1" data-total="param6th_1_total">3D6</button></td>
+                    <td>
+                        <img class="dice" id="dice6th_rule_1_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_1_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_1_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param6th_1_total"></td>
+                </tr>
+                <tr>
+                    <td>CON（体力）<br><button class="roll" data-param-id="2" data-total="param6th_2_total">3D6</button></td>
+                    <td>
+                        <img class="dice" id="dice6th_rule_2_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_2_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_2_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param6th_2_total"></td>
+                </tr>
+                <tr>
+                    <td>SIZ（体格）<br><button class="roll" data-param-id="7" data-total="param6th_7_total">2D6+6</button></td>
+                    <td>
+                        <img class="dice" id="dice6th_rule_7_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_7_2" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param6th_7_total"></td>
+                </tr>
+                <tr>
+                    <td>DEX（機敏性）<br><button class="roll" data-param-id="3" data-total="param6th_3_total">3D6</button></td>
+                    <td>
+                        <img class="dice" id="dice6th_rule_3_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_3_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_3_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param6th_3_total"></td>
+                </tr>
+                <tr>
+                    <td>APP（外見）<br><button class="roll" data-param-id="4" data-total="param6th_4_total">3D6</button></td>
+                    <td>
+                        <img class="dice" id="dice6th_rule_4_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_4_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_4_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param6th_4_total"></td>
+                </tr>
+                <tr>
+                    <td>INT（知性）<br><button class="roll" data-param-id="5" data-total="param6th_5_total">2D6+6</button></td>
+                    <td>
+                        <img class="dice" id="dice6th_rule_5_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_5_2" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param6th_5_total"></td>
+                </tr>
+                <tr>
+                    <td>POW（精神力）<br><button class="roll" data-param-id="6" data-total="param6th_6_total">3D6</button></td>
+                    <td>
+                        <img class="dice" id="dice6th_rule_6_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_6_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_6_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param6th_6_total"></td>
+                </tr>
+                <tr>
+                    <td>EDU（教育）<br><button class="roll" data-param-id="8" data-total="param6th_8_total">3D6+3</button></td>
+                    <td>
+                        <img class="dice" id="dice6th_rule_8_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_8_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice6th_rule_8_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param6th_8_total"></td>
+                </tr>
+                <tr>
+                    <td>年収（1D10）<br><button class="roll" data-param-id="9" data-total="param6th_9_total">1D10</button></td>
+                    <td>
+                        <img class="dice" id="dice6th_rule_9_1" width="32" height="32" src="10_1.png">
+                    </td>
+                    <td id="param6th_9_total"></td>
+                </tr>
+            </table>
+            <br />
+            <table class="table-r8">
+                <colgroup>
+                    <col width="230px">
+                    <col width="150px">
+                    <col width="90px">
+                </colgroup>
+                <tr>
+                    <th>能力名</th>
+                    <th>計算式</th>
+                    <th>能力値</th>
+                </tr>
+                <tr>
+                    <td>耐久力</td>
+                    <td>(CON+SIZ)/2</td>
+                    <td id="param6th_15_total"></td>
+                </tr>
+                <tr>
+                    <td>マジック・ポイント</td>
+                    <td>POW</td>
+                    <td id="param6th_16_total"></td>
+                </tr>
+                <tr>
+                    <td>SAN</td>
+                    <td>POW x 5</td>
+                    <td id="param6th_10_total"></td>
+                </tr>
+                <tr>
+                    <td>アイデア</td>
+                    <td>INT x 5</td>
+                    <td id="param6th_11_total"></td>
+                </tr>
+                <tr>
+                    <td>幸運</td>
+                    <td>POW x 5</td>
+                    <td id="param6th_12_total"></td>
+                </tr>
+                <tr>
+                    <td>知識</td>
+                    <td>EDU x 5</td>
+                    <td id="param6th_13_total"></td>
+                </tr>
+                <tr>
+                    <td>ダメージ・ボーナス</td>
+                    <td>STR+SIZ</td>
+                    <td id="param6th_14_total"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="7th" class="tab-contents" style="display:none;">
+            <select id="age" name="age">
+                <option value="7">7歳</option>
+                <option value="8">8歳</option>
+                <option value="9">9歳</option>
+                <option value="10">10歳</option>
+                <option value="11">11歳</option>
+                <option value="12">12歳</option>
+                <option value="13">13歳</option>
+                <option value="14">14歳</option>
+                <option value="15">15～19歳</option>
+                <option value="20" selected>20～39歳</option>
+                <option value="40">40～49歳</option>
+                <option value="50">50～59歳</option>
+                <option value="60">60～69歳</option>
+                <option value="70">70～79歳</option>
+                <option value="80">80～89歳</option>
+            </select>
+            <button class="roll_all" data-rule="7th">Roll All</button>
+
+            <div id="age_adjust15">
+                15～19歳：幸運を2回振り、多い方を採用／EDU-5／STRとSIZから計5をマイナス
+                <select id="str_decrease">
+                     <option value="0">STR減少なし</option>
+                     <option value="-1">STR -1</option>
+                     <option value="-2">STR -2</option>
+                     <option value="-3">STR -3</option>
+                     <option value="-4">STR -4</option>
+                     <option value="-5">STR -5</option>
+                </select>
+            </div>
+            <div id="age_adjust20">
+                20～39歳：EDU上達チェック1回行う。
+            </div>
+            <div id="age_adjust40">
+                40～49歳：EDU上達チェックを2回行う。STR/CON/DEXから合計5ポイント減少。APP-5、MOV-1
+            </div>
+            <div id="age_adjust50">
+                50～59歳：EDU上達チェックを3回行う。STR/CON/DEXから合計10ポイント減少。APP-10、MOV-2
+            </div>
+            <div id="age_adjust60">
+                60～69歳：EDU上達チェックを4回行う。STR/CON/DEXから合計20ポイント減少。APP-15、MOV-3
+            </div>
+            <div id="age_adjust70">
+                70～79歳：EDU上達チェックを4回行う。STR/CON/DEXから合計40ポイント減少。APP-20、MOV-4
+            </div>
+            <div id="age_adjust80">
+                80～89歳：EDU上達チェックを4回行う。STR/CON/DEXから合計80ポイント減少。APP-25、MOV-5
+            </div>
+            <div id="improvement_edu"></div>
+                
+            <table class="table-r8">
+                <colgroup>
+                    <col width="230px">
+                    <col width="150px">
+                    <col width="90px">
+                    <col width="90px">
+                </colgroup>
+                <tr>
+                    <th>能力名</th>
+                    <th>ダイス</th>
+                    <th>能力値</th>
+                    <th>年齢調整</th>
+                </tr>
+                <tr>
+                    <td><ruby>STR<rt>筋力</rt></ruby> <button class="roll" data-param-id="1" data-total="param7th_1_total">3D6 x 5</button></td>
+                    <td>
+                        <img class="dice" id="dice7th_rule_1_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_1_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_1_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param7th_1_total"> </td>
+                    <td id="param7th_1_adjust"> </td>
+                </tr>
+                <tr>
+                    <td><ruby>CON<rt>体力</rt></ruby> <button class="roll" data-param-id="2" data-total="param7th_2_total">3D6 x 5</button></td>
+                    <td>
+                        <img class="dice" id="dice7th_rule_2_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_2_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_2_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param7th_2_total"></td>
+                    <td id="param7th_2_adjust"></td>
+                </tr>
+                <tr>
+                    <td><ruby>SIZ<rt>体格</rt></ruby> <button class="roll" data-param-id="3" data-total="param7th_3_total">(2D6+6) x 5</button></td>
+                    <td>
+                        <img class="dice" id="dice7th_rule_3_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_3_2" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param7th_3_total"></td>
+                    <td id="param7th_3_adjust"></td>
+                </tr>
+                <tr>
+                    <td>DEX（機敏性）<button class="roll" data-param-id="4" data-total="param7th_4_total">3D6 x 5</button></td>
+                    <td>
+                        <img class="dice" id="dice7th_rule_4_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_4_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_4_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param7th_4_total"></td>
+                    <td id="param7th_4_adjust"></td>
+                </tr>
+                <tr>
+                    <td>APP（外見）<button class="roll" data-param-id="5" data-total="param7th_5_total">3D6 x 5</button></td>
+                    <td>
+                        <img class="dice" id="dice7th_rule_5_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_5_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_5_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param7th_5_total"></td>
+                    <td id="param7th_5_adjust"></td>
+                </tr>
+                <tr>
+                    <td>EDU（教育）・知識<button class="roll" data-param-id="6" data-total="param7th_6_total">(2D6+6) x 5</button></td>
+                    <td>
+                        <img class="dice" id="dice7th_rule_6_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_6_2" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param7th_6_total"></td>
+                    <td id="param7th_6_adjust"></td>
+                </tr>
+                <tr>
+                    <td>INT（知性）・アイデア<button class="roll" data-param-id="7" data-total="param7th_7_total">(2D6+6) x 5</button></td>
+                    <td>
+                        <img class="dice" id="dice7th_rule_7_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_7_2" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param7th_7_total"></td>
+                    <td id="param7th_7_adjust"></td>
+                </tr>
+                <tr>
+                    <td>POW（精神力）<button class="roll" data-param-id="8" data-total="param7th_8_total">3D6 x 5</button></td>
+                    <td>
+                        <img class="dice" id="dice7th_rule_8_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_8_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_8_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param7th_8_total"></td>
+                    <td id="param7th_8_adjust"></td>
+                </tr>
+                <tr id="u19_luck">
+                    <td>幸運（19歳以下）<button class="roll" data-param-id="16" data-total="param7th_16_total">3D6 x 5</button></td>
+                    <td>
+                        <img class="dice" id="dice7th_rule_16_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_16_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_16_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param7th_16_total"></td>
+                    <td rowspan=”2″></td>
+                </tr>
+                <tr>
+                    <td>幸運 <button class="roll" data-param-id="9" data-total="param7th_9_total">3D6 x 5</button></td>
+                    <td>
+                        <img class="dice" id="dice7th_rule_9_1" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_9_2" width="32" height="32" src="1.png">
+                        <img class="dice" id="dice7th_rule_9_3" width="32" height="32" src="1.png">
+                    </td>
+                    <td id="param7th_9_total"></td>
+                    <td id="param7th_9_adjust"></td>
+                </tr>
+            </table>
+            <br />
+            <table class="table-r8">
+                <colgroup>
+                    <col width="230px">
+                    <col width="150px">
+                    <col width="90px">
+                    <col width="90px">
+                </colgroup>
+                <tr>
+                    <th>能力名</th>
+                    <th>計算式</th>
+                    <th>能力値</th>
+                    <th>年齢調整</th>
+                </tr>
+                <tr>
+                    <td>耐久力</td>
+                    <td>(CON+SIZ)/10</td>
+                    <td id="param7th_14_total"></td>
+                    <td id="param7th_14_adjust"></td>
+                </tr>
+                <tr>
+                    <td>マジック・ポイント</td>
+                    <td>POW/5</td>
+                    <td id="param7th_15_total"></td>
+                    <td id="param7th_15_adjust"></td>
+                </tr>
+                <tr>
+                    <td>正気度</td>
+                    <td>POW</td>
+                    <td id="param7th_10_total"></td>
+                    <td id="param7th_10_adjust"></td>
+                </tr>
+                <tr>
+                    <td>移動率</td>
+                    <td>DEX・STR・SIZ</td>
+                    <td id="param7th_11_total"></td>
+                    <td id="param7th_11_adjust"></td>
+                </tr>
+                <tr>
+                    <td>ダメージ・ボーナス</td>
+                    <td>STR+SIZ</td>
+                    <td id="param7th_12_total"></td>
+                    <td id="param7th_12_adjust"></td>
+                </tr>
+                <tr>
+                    <td>ビルド</td>
+                    <td>STR+SIZ</td>
+                    <td id="param7th_13_total"></td>
+                    <td id="param7th_13_adjust"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="preset" class="tab-contents" style="display:none;">
+            あああああ
+        </div>
+
+    </div>
+    <div class="chart-container" style="position: relative; height:40vh; width:80vw">
+        <canvas id="radarChart"></canvas>
+    </div>
+
+    <script src="investigator.js"></script>
+    <script src="tab.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</body>
+</html>
