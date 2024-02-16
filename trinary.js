@@ -300,14 +300,35 @@ function applyTernaryFilterToSelectedImage(selectedImageIndex) {
         imageStartPos = null;
     });
     
+
+    let lastWheelTime = null;
+    let lastDeltaY = 0;
     
     canvas.addEventListener('wheel', function(event) {
         if (selectedImageIndex !== null) {
             event.preventDefault();
-            const delta = Math.sign(event.deltaY) * -1;
-            
+            const currentTime = Date.now();
+    
+            // 経過時間を計算
+            const elapsedTime = lastWheelTime ? currentTime - lastWheelTime : 0;
+            const deltaY = event.deltaY;
+            const deltaYSign = Math.sign(deltaY);
+            lastWheelTime = currentTime;
+    
+            let scaleMultiplier;
+            if (elapsedTime <= 70 && deltaYSign === Math.sign(lastDeltaY)) {
+                // 0.07秒以内に同じ方向のホイールイベントが発生した場合
+                // deltaYの絶対値を二乗し、符号を反転させる
+                scaleMultiplier = -deltaYSign * Math.min(20, Math.pow(Math.abs(deltaY) / 90, 2));
+            } else {
+                // それ以外の場合は単純なスケールで符号を反転
+                scaleMultiplier = -deltaYSign;
+            }
+            console.log(scaleMultiplier);
+            lastDeltaY = deltaY;
+    
             // 新しい表示幅を計算
-            const newDisplayWidth = Math.max(1, images[selectedImageIndex].displayWidth + delta * 10);
+            const newDisplayWidth = Math.max(1, images[selectedImageIndex].displayWidth + scaleMultiplier * 10);
             // スケールを計算
             const scale = newDisplayWidth / images[selectedImageIndex].originalWidth;
     
@@ -320,4 +341,5 @@ function applyTernaryFilterToSelectedImage(selectedImageIndex) {
     });
     
     
+
 }
