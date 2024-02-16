@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Image Overlay and Threshold Adjustment</title>
+</head>
+<body>
+    <canvas id="imageCanvas"></canvas><br />
+    <label for="imageSelect">対象画像選択:</label>
+    <select id="imageSelect"></select>
+    <br>
+    <label for="thresholdSlider">閾値の調整:</label>
+    <input type="range" id="thresholdSliderLow" min="0" max="255" value="85">
+    <input type="range" id="thresholdSliderHigh" min="0" max="255" value="170">
+    <span id="lowThresholdValue">85</span>
+    <span id="highThresholdValue">170</span>
+    <button id="resetButton">リセット</button>
+    <br>
+
+    <table>
+        <tr>
+            <td>
+                <label for="colorBlack">DARK:</label>
+                <input type="color" id="colorBlack" name="colorBlack" value="#000000">
+            </td>
+            <td>
+                <label for="colorGray">MID:</label>
+                <input type="color" id="colorGray" name="colorGray" value="#808080">
+            </td>
+            <td>
+                <label for="colorWhite">LIGHT:</label>
+                <input type="color" id="colorWhite" name="colorWhite" value="#FFFFFF">
+            </td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <script src="trinary.js" defer></script>
+    <div id="imageLoad"></div>
+</body>
+</html>
