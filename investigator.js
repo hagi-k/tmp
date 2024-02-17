@@ -76,10 +76,12 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 */    
 
+
+    let mt = initializeMersenneTwister();
     function rollDice(diceParams, totalId, rule) {
-        let mt = initializeMersenneTwister();
-        let count = Math.floor(Math.random() * 10) + 10;
+        let count = Math.floor(Math.random() * 12) + 7;
         let history = Array(diceParams.num).fill([]);
+
         let finalValues = Array(diceParams.num).fill(0).map(() => generateRandomNumber(1, diceParams.dice, mt));
 
         let intervalId = setInterval(function() {
@@ -88,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
             for (let i = 0; i < diceParams.num; i++) {
                 let newValue;
                 if (count > 1) {
-                    // シミュレーション段階：ランダムな値を生成
+                    // ダイスロールアニメ
                     do {
                         newValue = Math.floor(Math.random() * diceParams.dice) + 1;
                     } while (history[i].includes(newValue));
@@ -126,18 +128,71 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 60);
     }
 
-
-    // メルセンヌ・ツイスターを初期化する関数
     function initializeMersenneTwister() {
-        // 現在の時刻（ミリ秒単位）とランダムな数値を組み合わせてシード値を生成
-        const seed = new Date().getTime() + Math.floor(Math.random() * 1000);
+        const seed = new Date().getTime() + Math.floor(Math.random() * 100000);
         return new MersenneTwister(seed);
     }
 
-    // メルセンヌ・ツイスターを使って乱数を生成する関数
     function generateRandomNumber(min, max, mt) {
         return mt.nextInt(min, max);
     }
+
+
+/*
+    function rollDice(diceParams, totalId, rule) {
+        let count = Math.floor(Math.random() * 11) + 10;
+        let history = Array(diceParams.num).fill([]);
+
+        let intervalId = setInterval(function() {
+            let total = diceParams.addValue;
+
+            for (let i = 0; i < diceParams.num; i++) {
+                let newValue, attempts = 0;
+                do {
+                    newValue = Math.floor(Math.random() * diceParams.dice);
+                    if (diceParams.dice === 6) {
+                        newValue += 1;
+                    }
+                    attempts++;
+                    if (attempts > 50) break;
+                } while (history[i].includes(newValue));
+
+                if (history[i].length >= 1) {
+                    history[i].shift();
+                }
+                history[i].push(newValue);
+
+                total += newValue;
+
+
+                let diceImageId = `dice${rule}_${diceParams.id}_${i + 1}`;
+                let diceImage = document.getElementById(diceImageId);
+                if (diceImage) {
+                    let imageName = (diceParams.dice === 10) ? `10_${newValue}` : newValue;
+                    diceImage.src = imageName + '.png';
+                }
+            }
+
+            if (rule === '7th_rule') {
+                total *= 5;
+            }
+
+            document.getElementById(totalId).textContent = total;
+
+            if(diceParams.id===6 && rule==='7th_rule') {
+                if(count===1) { improvementEdu(); } // EDU数値決定したので上達チェックする
+            }
+
+            if (--count <= 0) {
+                clearInterval(intervalId);
+            }
+
+            calculateAdditionalParams();
+
+        }, 60);
+    }
+*/
+
 
     // ダイスロール後に追加のパラメータを計算する関数
     function calculateAdditionalParams() {
