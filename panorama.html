@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360° Image Viewer with Gyroscope</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@4.0.6/dist/photo-sphere-viewer.min.css">
+    <style>
+        #viewer {
+            width: 100%;
+            height: 100vh;
+            background-color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="viewer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uevent@2.0.0/browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/darkroom@0.0.7/dist/darkroom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@4.0.6/dist/photo-sphere-viewer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/photo-sphere-viewer@4.0.6/dist/plugins/gyroscope.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewer = new PhotoSphereViewer.Viewer({
+                container: document.querySelector('#viewer'),
+                panorama: 'https://pbs.twimg.com/media/FwsYvZ0aEAYUST-?format=jpg&name=4096x4096', // ここに360度画像のパスを指定
+                navbar: true,
+                loadingImg: 'https://photo-sphere-viewer.js.org/assets/photosphere-logo.gif',
+                caption: '360° Image',
+                defaultZoomLvl: 50,
+                touchmoveTwoFingers: true,
+                plugins: [
+                    PhotoSphereViewer.GyroscopePlugin
+                ]
+            });
+        });
+    </script>
+</body>
+</html>
