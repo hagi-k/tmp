@@ -1,61 +1,216 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <title>3D 10面ダイス</title>
-    <style>
-        body { margin: 0; }
-        canvas { width: 100%; height: 100%; display: block; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ダイスロール</title>
+  <style>
+    body {
+      margin: 16px;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    button {
+      padding: 12px 16px;
+      margin: 4px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: #fff;
+    }
+    button:active {
+      opacity: 0.8;
+    }
+    #dice-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    #dice-container img {
+      width: 60px;
+      height: 60px;
+      margin: 0 4px;
+    }
+    .separator {
+      border-left: 2px solid #000;
+      height: 60px;
+      margin: 0 12px;
+    }
+    #result {
+      font-size: 2em;
+      margin: 8px 0 4px;
+    }
+    #judgment {
+      font-size: 1.2em;
+      margin-bottom: 8px;
+      color: #c00;
+    }
+    #hard-success,
+    #extreme-success {
+      font-size: 18px;
+      margin: 8px 0;
+    }
+    .bright {
+      filter: brightness(1.2);
+    }
+    .dark {
+      filter: brightness(0.5);
+    }
+  </style>
 </head>
 <body>
-    <script src="https://threejs.org/build/three.js"></script>
-    <script>
-        let scene, camera, renderer, dice, animate;
+  <button id="roll">ダイスロール</button>
+  <button id="bonus">ボーナスダイス</button>
+  <button id="penalty">ペナルティダイス</button>
 
-        init();
-        rollDice();
+  <div id="dice-container"></div>
+  <div id="result"></div>
+  <div id="judgment"></div>
+  <div id="hard-success"></div>
+  <div id="extreme-success"></div>
 
-        function init() {
-            // シーン、カメラ、レンダラーの設定
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
+  <script>
+    const diceContainer = document.getElementById('dice-container');
+    const resultDiv     = document.getElementById('result');
+    const judgmentDiv   = document.getElementById('judgment');
+    const hardDiv       = document.getElementById('hard-success');
+    const extremeDiv    = document.getElementById('extreme-success');
+    const successRate   = 50; // 任意で変更可能
 
-            // ダイスのジオメトリとマテリアルを作成
-            const geometry = new THREE.DodecahedronGeometry(1);
-            const material = new THREE.MeshNormalMaterial();
-            dice = new THREE.Mesh(geometry, material);
-            scene.add(dice);
-
-            camera.position.z = 5;
-
-            // ウィンドウのリサイズに対応
-            window.addEventListener('resize', onWindowResize, false);
+    function animateDice(img, callback) {
+      const spins = Math.floor(Math.random() * 6) + 10;
+      let count = 0, face = 0;
+      const iv = setInterval(() => {
+        img.src = '10_' + face + '.png';
+        face = Math.floor(Math.random() * 10);
+        if (++count >= spins) {
+          clearInterval(iv);
+          const finalFace = Math.floor(Math.random() * 10);
+          img.src = '10_' + finalFace + '.png';
+          callback(finalFace);
         }
+      }, 50);
+    }
 
-        function rollDice() {
-            // ダイスの回転アニメーション
-            animate = function () {
-                requestAnimationFrame(animate);
+    function displayResults(tens, ones) {
+      // 結果計算
+      let num = tens * 10 + ones;
+      if (num === 0) num = 100;
+      else if (tens === 0) num = ones;
 
-                // ランダムな回転
-                dice.rotation.x += Math.random() * 0.05;
-                dice.rotation.y += Math.random() * 0.05;
+      // 結果表示
+      resultDiv.textContent = num;
+      judgmentDiv.textContent = '';
 
-                renderer.render(scene, camera);
-            };
+      // ファンブル／クリティカル判定
+      if (num === 100) {
+        judgmentDiv.textContent = 'ファンブル';
+      } else if (num === 1) {
+        judgmentDiv.textContent = 'クリティカル';
+      } else if (num > 95) {
+        judgmentDiv.textContent = '成功率が50未満ならファンブル';
+      }
 
-            animate();
+      // ハード成功：結果×2、99未満なら表示
+      const hardVal = num * 2;
+      if (hardVal < 99) {
+        hardDiv.textContent = hardVal + '以上でハード成功' ;
+      } else {
+        hardDiv.textContent = '';
+      }
+
+      // エクストリーム成功：結果×5、99未満なら表示
+      const extremeVal = num * 5;
+      if (extremeVal < 99) {
+        extremeDiv.textContent = extremeVal + '以上でエクストリーム成功' ;
+      } else {
+        extremeDiv.textContent = '';
+      }
+    }
+
+    function basicRoll() {
+      diceContainer.innerHTML = '';
+      resultDiv.textContent   = '';
+      judgmentDiv.textContent = '';
+      hardDiv.textContent     = '';
+      extremeDiv.textContent  = '';
+
+      const imgs = [], vals = [];
+      for (let i = 0; i < 2; i++) {
+        const img = document.createElement('img');
+        img.src = '10_0.png';
+        diceContainer.appendChild(img);
+        imgs.push(img);
+      }
+      let done = 0;
+      imgs.forEach((img, i) => {
+        animateDice(img, v => {
+          vals[i] = v;
+          if (++done === 2) displayResults(vals[0], vals[1]);
+        });
+      });
+    }
+
+    function bonusPenaltyRoll(isBonus) {
+      diceContainer.innerHTML = '';
+      resultDiv.textContent   = '';
+      judgmentDiv.textContent = '';
+      hardDiv.textContent     = '';
+      extremeDiv.textContent  = '';
+
+      const imgT1 = document.createElement('img');
+      const imgT2 = document.createElement('img');
+      const sep   = document.createElement('div');
+      sep.className = 'separator';
+      const imgO  = document.createElement('img');
+
+      imgT1.src = imgT2.src = imgO.src = '10_0.png';
+      diceContainer.append(imgT1, imgT2, sep, imgO);
+
+      const values = {}, total = { cnt: 0 };
+      const doneCheck = () => {
+        if (total.cnt === 3) {
+          // 明るさ設定
+          let brighterIndex;
+          if (isBonus) {
+            brighterIndex = (values.t1 <= values.t2) ? 1 : 2;
+          } else {
+            const eff1 = (values.t1 === 0 ? 10 : values.t1);
+            const eff2 = (values.t2 === 0 ? 10 : values.t2);
+            brighterIndex = (eff1 >= eff2) ? 1 : 2;
+          }
+          if (brighterIndex === 1) {
+            imgT1.classList.add('bright');
+            imgT2.classList.add('dark');
+          } else {
+            imgT2.classList.add('bright');
+            imgT1.classList.add('dark');
+          }
+
+          // スペシャルケース
+          if (!isBonus && values.o === 0 && (values.t1 === 0 || values.t2 === 0)) {
+            displayResults(0, 0);
+          } else if (isBonus && values.o === 0 && (values.t1 === 0 || values.t2 === 0)) {
+            const tensVal = (values.t1 === 0 ? values.t2 : values.t1);
+            displayResults(tensVal, 0);
+          } else {
+            const tens = (brighterIndex === 1 ? values.t1 : values.t2);
+            displayResults(tens, values.o);
+          }
         }
+      };
 
-        function onWindowResize() {
-            // ウィンドウのリサイズに対応するためのカメラとレンダラーの調整
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-    </script>
+      animateDice(imgT1, v => { values.t1 = v; total.cnt++; doneCheck(); });
+      animateDice(imgT2, v => { values.t2 = v; total.cnt++; doneCheck(); });
+      animateDice(imgO,  v => { values.o  = v; total.cnt++; doneCheck(); });
+    }
+
+    document.getElementById('roll')   .addEventListener('click', basicRoll);
+    document.getElementById('bonus')  .addEventListener('click', () => bonusPenaltyRoll(true));
+    document.getElementById('penalty').addEventListener('click', () => bonusPenaltyRoll(false));
+  </script>
 </body>
 </html>
