@@ -19,6 +19,10 @@
       background-color: #007bff;
       color: #fff;
     }
+    /* ダイスロールボタンのみ2emに */
+    #roll {
+      font-size: 2em;
+    }
     button:active {
       opacity: 0.8;
     }
@@ -78,7 +82,7 @@
     const judgmentDiv   = document.getElementById('judgment');
     const hardDiv       = document.getElementById('hard-success');
     const extremeDiv    = document.getElementById('extreme-success');
-    const successRate   = 50; // 任意で変更可能
+    const successRate   = 50;
 
     function animateDice(img, callback) {
       const spins = Math.floor(Math.random() * 6) + 10;
@@ -96,16 +100,13 @@
     }
 
     function displayResults(tens, ones) {
-      // 結果計算
       let num = tens * 10 + ones;
       if (num === 0) num = 100;
       else if (tens === 0) num = ones;
 
-      // 結果表示
       resultDiv.textContent = num;
       judgmentDiv.textContent = '';
 
-      // ファンブル／クリティカル判定
       if (num === 100) {
         judgmentDiv.textContent = 'ファンブル';
       } else if (num === 1) {
@@ -114,21 +115,10 @@
         judgmentDiv.textContent = '成功率が50未満ならファンブル';
       }
 
-      // ハード成功：結果×2、99未満なら表示
       const hardVal = num * 2;
-      if (hardVal < 99) {
-        hardDiv.textContent = hardVal + '以上でハード成功' ;
-      } else {
-        hardDiv.textContent = '';
-      }
-
-      // エクストリーム成功：結果×5、99未満なら表示
+      hardDiv.textContent = (hardVal < 99 ? 'ハード成功 ' + hardVal : '');
       const extremeVal = num * 5;
-      if (extremeVal < 99) {
-        extremeDiv.textContent = extremeVal + '以上でエクストリーム成功' ;
-      } else {
-        extremeDiv.textContent = '';
-      }
+      extremeDiv.textContent = (extremeVal < 99 ? 'エクストリーム成功 ' + extremeVal : '');
     }
 
     function basicRoll() {
@@ -163,8 +153,7 @@
 
       const imgT1 = document.createElement('img');
       const imgT2 = document.createElement('img');
-      const sep   = document.createElement('div');
-      sep.className = 'separator';
+      const sep   = document.createElement('div'); sep.className = 'separator';
       const imgO  = document.createElement('img');
 
       imgT1.src = imgT2.src = imgO.src = '10_0.png';
@@ -173,7 +162,6 @@
       const values = {}, total = { cnt: 0 };
       const doneCheck = () => {
         if (total.cnt === 3) {
-          // 明るさ設定
           let brighterIndex;
           if (isBonus) {
             brighterIndex = (values.t1 <= values.t2) ? 1 : 2;
@@ -190,7 +178,6 @@
             imgT1.classList.add('dark');
           }
 
-          // スペシャルケース
           if (!isBonus && values.o === 0 && (values.t1 === 0 || values.t2 === 0)) {
             displayResults(0, 0);
           } else if (isBonus && values.o === 0 && (values.t1 === 0 || values.t2 === 0)) {
