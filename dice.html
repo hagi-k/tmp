@@ -26,6 +26,13 @@
     button:active {
       opacity: 0.8;
     }
+    /* bright/dark はボタンにも適用 */
+    .bright {
+      filter: brightness(1.2);
+    }
+    .dark {
+      filter: brightness(0.5);
+    }
     #dice-container {
       display: flex;
       justify-content: center;
@@ -57,12 +64,6 @@
       font-size: 18px;
       margin: 8px 0;
     }
-    .bright {
-      filter: brightness(1.2);
-    }
-    .dark {
-      filter: brightness(0.5);
-    }
   </style>
 </head>
 <body>
@@ -77,11 +78,23 @@
   <div id="extreme-success"></div>
 
   <script>
+    const rollBtn    = document.getElementById('roll');
+    const bonusBtn   = document.getElementById('bonus');
+    const penaltyBtn = document.getElementById('penalty');
     const diceContainer = document.getElementById('dice-container');
     const resultDiv     = document.getElementById('result');
     const judgmentDiv   = document.getElementById('judgment');
     const hardDiv       = document.getElementById('hard-success');
     const extremeDiv    = document.getElementById('extreme-success');
+
+    // 最後に押されたボタンを bright、それ以外を dark に
+    function highlightButton(clicked) {
+      [rollBtn, bonusBtn, penaltyBtn].forEach(btn => {
+        btn.classList.remove('bright', 'dark');
+        if (btn === clicked) btn.classList.add('bright');
+        else btn.classList.add('dark');
+      });
+    }
 
     function animateDice(img, callback) {
       const spins = Math.floor(Math.random() * 6) + 10;
@@ -98,28 +111,23 @@
       }, 50);
     }
 
-    // 候補結果を計算するヘルパー
     function candidateValue(tens, ones) {
       let v = tens * 10 + ones;
       if (v === 0)      return 100;  // 00 → 100
       if (tens === 0)   return ones; // 0x → x
-      return v;                     // 通常
+      return v;
     }
 
     function displayResults(tens, ones) {
       let num = candidateValue(tens, ones);
-      resultDiv.textContent = num;
-      judgmentDiv.textContent = '';
+      resultDiv.textContent    = num;
+      judgmentDiv.textContent  = '';
 
-      if (num === 100) {
-        judgmentDiv.textContent = 'ファンブル';
-      } else if (num === 1) {
-        judgmentDiv.textContent = 'クリティカル';
-      } else if (num > 95) {
-        judgmentDiv.textContent = '成功率が50未満ならファンブル';
-      }
+      if (num === 100)            judgmentDiv.textContent = 'ファンブル';
+      else if (num === 1)         judgmentDiv.textContent = 'クリティカル';
+      else if (num > 95)          judgmentDiv.textContent = '成功率が50未満ならファンブル';
 
-      const hardVal = num * 2;
+      const hardVal    = num * 2;
       hardDiv.textContent    = (hardVal < 99 ? hardVal + '以上ならハード成功 ' : '');
       const extremeVal = num * 5;
       extremeDiv.textContent = (extremeVal < 99 ? extremeVal + '以上ならエクストリーム成功 ' : '');
@@ -127,16 +135,16 @@
 
     function basicRoll() {
       diceContainer.innerHTML = '';
-      resultDiv.textContent   = '';
-      judgmentDiv.textContent = '';
-      hardDiv.textContent     = '';
-      extremeDiv.textContent  = '';
+      resultDiv.textContent    = '';
+      judgmentDiv.textContent  = '';
+      hardDiv.textContent      = '';
+      extremeDiv.textContent   = '';
 
       const imgs = [], vals = [];
       for (let i = 0; i < 2; i++) {
         const img = document.createElement('img');
         img.src = '10_0.png';
-        diceContainer.appendChild(img);
+        diceContainer.append(img);
         imgs.push(img);
       }
       let done = 0;
@@ -150,10 +158,10 @@
 
     function bonusPenaltyRoll(isBonus) {
       diceContainer.innerHTML = '';
-      resultDiv.textContent   = '';
-      judgmentDiv.textContent = '';
-      hardDiv.textContent     = '';
-      extremeDiv.textContent  = '';
+      resultDiv.textContent    = '';
+      judgmentDiv.textContent  = '';
+      hardDiv.textContent      = '';
+      extremeDiv.textContent   = '';
 
       const imgT1 = document.createElement('img');
       const imgT2 = document.createElement('img');
@@ -166,17 +174,11 @@
       const doneCheck = () => {
         if (total.cnt !== 3) return;
 
-        // 候補値を計算
         const c1 = candidateValue(values.t1, values.o);
         const c2 = candidateValue(values.t2, values.o);
-
-        // 小さい／大きいほうを選ぶ
         let chosenIndex;
-        if (isBonus) {
-          chosenIndex = c1 <= c2 ? 1 : 2;
-        } else {
-          chosenIndex = c1 >= c2 ? 1 : 2;
-        }
+        if (isBonus) chosenIndex = c1 <= c2 ? 1 : 2;
+        else         chosenIndex = c1 >= c2 ? 1 : 2;
 
         // 明るさ設定
         if (chosenIndex === 1) {
@@ -187,8 +189,7 @@
           imgT1.classList.add('dark');
         }
 
-        // その結果で描画
-        const tens  = chosenIndex === 1 ? values.t1 : values.t2;
+        const tens = (chosenIndex === 1 ? values.t1 : values.t2);
         displayResults(tens, values.o);
       };
 
@@ -197,9 +198,9 @@
       animateDice(imgO,  v => { values.o  = v; total.cnt++; doneCheck(); });
     }
 
-    document.getElementById('roll')   .addEventListener('click', basicRoll);
-    document.getElementById('bonus')  .addEventListener('click', () => bonusPenaltyRoll(true));
-    document.getElementById('penalty').addEventListener('click', () => bonusPenaltyRoll(false));
+    rollBtn   .addEventListener('click', () => { highlightButton(rollBtn);   basicRoll(); });
+    bonusBtn  .addEventListener('click', () => { highlightButton(bonusBtn);  bonusPenaltyRoll(true); });
+    penaltyBtn.addEventListener('click', () => { highlightButton(penaltyBtn); bonusPenaltyRoll(false); });
   </script>
 </body>
 </html>
