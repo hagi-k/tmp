@@ -40,7 +40,7 @@
     }
     .separator {
       border-left: 2px solid #000;
-      height: 60px;
+      height: 90px;
       margin: 0 12px;
     }
     #result {
@@ -66,7 +66,7 @@
   </style>
 </head>
 <body>
-  <button id="roll">ダイスロール</button><br/>
+  <button id="roll">ダイスロール</button><br>
   <button id="bonus">ボーナスダイス</button>
   <button id="penalty">ペナルティダイス</button>
 
@@ -82,7 +82,6 @@
     const judgmentDiv   = document.getElementById('judgment');
     const hardDiv       = document.getElementById('hard-success');
     const extremeDiv    = document.getElementById('extreme-success');
-    const successRate   = 50;
 
     function animateDice(img, callback) {
       const spins = Math.floor(Math.random() * 6) + 10;
@@ -99,11 +98,16 @@
       }, 50);
     }
 
-    function displayResults(tens, ones) {
-      let num = tens * 10 + ones;
-      if (num === 0) num = 100;
-      else if (tens === 0) num = ones;
+    // 候補結果を計算するヘルパー
+    function candidateValue(tens, ones) {
+      let v = tens * 10 + ones;
+      if (v === 0)      return 100;  // 00 → 100
+      if (tens === 0)   return ones; // 0x → x
+      return v;                     // 通常
+    }
 
+    function displayResults(tens, ones) {
+      let num = candidateValue(tens, ones);
       resultDiv.textContent = num;
       judgmentDiv.textContent = '';
 
@@ -116,9 +120,9 @@
       }
 
       const hardVal = num * 2;
-      hardDiv.textContent = (hardVal < 99 ? 'ハード成功 ' + hardVal : '');
+      hardDiv.textContent    = (hardVal < 99 ? hardVal + '以上ならハード成功 ' : '');
       const extremeVal = num * 5;
-      extremeDiv.textContent = (extremeVal < 99 ? 'エクストリーム成功 ' + extremeVal : '');
+      extremeDiv.textContent = (extremeVal < 99 ? extremeVal + '以上ならエクストリーム成功 ' : '');
     }
 
     function basicRoll() {
@@ -155,39 +159,37 @@
       const imgT2 = document.createElement('img');
       const sep   = document.createElement('div'); sep.className = 'separator';
       const imgO  = document.createElement('img');
-
       imgT1.src = imgT2.src = imgO.src = '10_0.png';
       diceContainer.append(imgT1, imgT2, sep, imgO);
 
       const values = {}, total = { cnt: 0 };
       const doneCheck = () => {
-        if (total.cnt === 3) {
-          let brighterIndex;
-          if (isBonus) {
-            brighterIndex = (values.t1 <= values.t2) ? 1 : 2;
-          } else {
-            const eff1 = (values.t1 === 0 ? 10 : values.t1);
-            const eff2 = (values.t2 === 0 ? 10 : values.t2);
-            brighterIndex = (eff1 >= eff2) ? 1 : 2;
-          }
-          if (brighterIndex === 1) {
-            imgT1.classList.add('bright');
-            imgT2.classList.add('dark');
-          } else {
-            imgT2.classList.add('bright');
-            imgT1.classList.add('dark');
-          }
+        if (total.cnt !== 3) return;
 
-          if (!isBonus && values.o === 0 && (values.t1 === 0 || values.t2 === 0)) {
-            displayResults(0, 0);
-          } else if (isBonus && values.o === 0 && (values.t1 === 0 || values.t2 === 0)) {
-            const tensVal = (values.t1 === 0 ? values.t2 : values.t1);
-            displayResults(tensVal, 0);
-          } else {
-            const tens = (brighterIndex === 1 ? values.t1 : values.t2);
-            displayResults(tens, values.o);
-          }
+        // 候補値を計算
+        const c1 = candidateValue(values.t1, values.o);
+        const c2 = candidateValue(values.t2, values.o);
+
+        // 小さい／大きいほうを選ぶ
+        let chosenIndex;
+        if (isBonus) {
+          chosenIndex = c1 <= c2 ? 1 : 2;
+        } else {
+          chosenIndex = c1 >= c2 ? 1 : 2;
         }
+
+        // 明るさ設定
+        if (chosenIndex === 1) {
+          imgT1.classList.add('bright');
+          imgT2.classList.add('dark');
+        } else {
+          imgT2.classList.add('bright');
+          imgT1.classList.add('dark');
+        }
+
+        // その結果で描画
+        const tens  = chosenIndex === 1 ? values.t1 : values.t2;
+        displayResults(tens, values.o);
       };
 
       animateDice(imgT1, v => { values.t1 = v; total.cnt++; doneCheck(); });
