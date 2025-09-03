@@ -1,310 +1,491 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <title>動的生成画像 → X(Twitter) 共有（モバイル最適）</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="color-scheme" content="light dark" />
-  <style>
-    /* ===== ベース（モバイル最適＆ダークモード） ===== */
-    :root {
-      --bg: #0e1116;
-      --fg: #e7eaee;
-      --muted: #97a1ad;
-      --card: #161b22;
-      --border: #2b3138;
-      --accent: #2f81f7;
-      --accent-press: #1f6fe0;
-      --radius: 14px;
-      --shadow: 0 10px 30px rgba(0,0,0,.25);
-      --space: clamp(14px, 3.5vw, 22px);
-      --maxw: 720px;
-    }
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #f6f7f9;
-        --fg: #0f1720;
-        --muted: #5b6776;
-        --card: #ffffff;
-        --border: #e5e7eb;
-        --shadow: 0 10px 30px rgba(0,0,0,.08);
-      }
-    }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      color: var(--fg);
-      background:
-        radial-gradient(1200px 400px at 50% -120px, rgba(47,129,247,.25), transparent 60%),
-        var(--bg);
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      line-height: 1.6;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 68px) env(safe-area-inset-left);
-    }
+<meta charset="utf-8" />
+<title>問診票画像ジェネレーター（3:4縦長）</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<style>
+  :root{
+    --bg:#0e1116; --fg:#e7eaee; --muted:#97a1ad; --card:#161b22; --border:#2b3138;
+    --accent:#2f81f7; --accent-press:#1f6fe0; --radius:14px; --shadow:0 10px 30px rgba(0,0,0,.25);
+    --space:clamp(14px,3.6vw,22px); --maxw:760px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f7f9; --fg:#0f1720; --muted:#5b6776; --card:#fff; --border:#e5e7eb; --shadow:0 10px 30px rgba(0,0,0,.08); }
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--fg);
+    background: radial-gradient(1200px 400px at 50% -120px, rgba(47,129,247,.22), transparent 60%), var(--bg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.6;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 76px) env(safe-area-inset-left);
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:var(--space)}
+  header h1{margin:0 0 6px; font-size:clamp(20px,5.4vw,28px)}
+  header p{margin:0 0 var(--space); color:var(--muted); font-size:.95rem}
 
-    /* ===== レイアウト ===== */
-    .wrap {
-      max-width: var(--maxw);
-      margin: 0 auto;
-      padding: var(--space);
-    }
-    header h1 {
-      margin: 0 0 8px;
-      font-size: clamp(20px, 5vw, 28px);
-      letter-spacing: .02em;
-    }
-    header p {
-      margin: 0 0 var(--space);
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
+  .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+  .card__media{ aspect-ratio: 3 / 4; display:block; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.06)); border-bottom:1px solid var(--border); position:relative }
+  canvas{ width:100%; height:100%; display:block }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    .card__media {
-      /* 800x418に近い長方形比率。高さは画面幅に追随 */
-      aspect-ratio: 800 / 418;
-      display: block;
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.06));
-      border-bottom: 1px solid var(--border);
-      position: relative;
-    }
-    canvas {
-      width: 100%; /* CSSピクセル幅 */
-      height: 100%;
-      display: block;
-    }
+  .card__body{ padding:clamp(12px,3.2vw,18px); display:grid; gap:12px }
+  .grid{ display:grid; grid-template-columns:1fr; gap:10px }
+  .row2{ display:grid; gap:10px; grid-template-columns:1fr 1fr }
+  label.title{ display:block; color:var(--muted); font-size:.9rem; margin-bottom:6px }
+  textarea, input[type="text"], select{
+    width:100%; border:1px solid var(--border); background:transparent; color:var(--fg);
+    border-radius:10px; font-size:16px; padding:11px 12px; outline:none;
+  }
+  textarea:focus, input[type="text"]:focus, select:focus{
+    border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
+  }
+  .choices{display:flex; flex-wrap:wrap; gap:8px}
+  .chip{
+    display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); padding:8px 10px;
+    border-radius:999px; cursor:pointer; user-select:none; font-size:14px; background:transparent;
+  }
+  .chip input{appearance:none; width:18px; height:18px; border:2px solid var(--muted); border-radius:4px; display:inline-block; position:relative}
+  .chip input:checked{ border-color:var(--accent); background:var(--accent) }
+  .chip input:checked::after{ content:""; position:absolute; inset:2px; background:#fff; border-radius:2px }
+  .chip--radio input{ border-radius:50% }
+  .btnrow{ display:grid; grid-template-columns:1fr 1fr; gap:10px }
+  .btn{
+    -webkit-tap-highlight-color:transparent; user-select:none; appearance:none; border:0;
+    border-radius:12px; font-size:16px; font-weight:700; padding:14px 16px; cursor:pointer;
+    transition:transform .04s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
+    box-shadow:0 6px 18px rgba(0,0,0,.12)
+  }
+  .btn:active{ transform:translateY(1px) scale(.99) }
+  .btn--primary{ color:#fff; background:linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 88%, black)) }
+  .btn--primary:active{ background:linear-gradient(180deg, var(--accent-press), color-mix(in oklab, var(--accent-press) 80%, black)) }
+  .btn--ghost{ background:transparent; color:var(--fg); border:1px solid var(--border) }
+  .btn[disabled]{ opacity:.55; cursor:not-allowed; box-shadow:none }
 
-    .card__body {
-      padding: clamp(12px, 3.2vw, 18px);
-      display: grid;
-      gap: 12px;
-    }
-    .field label {
-      display: block;
-      font-size: 0.92rem;
-      color: var(--muted);
-      margin: 0 0 6px;
-    }
-    textarea, input[type="text"] {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--fg);
-      border-radius: 10px;
-      font-size: 16px; /* ズーム防止 */
-      padding: 12px 14px;
-      outline: none;
-    }
-    textarea:focus, input[type="text"]:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
-    }
-
-    .btnrow {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .btn {
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      appearance: none;
-      border: 0;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: transform .04s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
-      box-shadow: 0 6px 18px rgba(0,0,0,.12);
-    }
-    .btn:active { transform: translateY(1px) scale(.99); }
-    .btn--primary {
-      color: white;
-      background: linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 88%, black));
-    }
-    .btn--primary:active { background: linear-gradient(180deg, var(--accent-press), color-mix(in oklab, var(--accent-press) 80%, black)); }
-    .btn--ghost {
-      background: transparent;
-      color: var(--fg);
-      border: 1px solid var(--border);
-    }
-    .btn[disabled] { opacity: .55; cursor: not-allowed; box-shadow: none; }
-
-    /* ===== フッター固定アクション（親指で押しやすい） ===== */
-    .cta {
-      position: fixed;
-      left: env(safe-area-inset-left);
-      right: env(safe-area-inset-right);
-      bottom: env(safe-area-inset-bottom);
-      z-index: 9;
-      padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
-      backdrop-filter: blur(8px);
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.00), rgba(0,0,0,.18) 35%, rgba(0,0,0,.28));
-    }
-    @media (prefers-color-scheme: light) {
-      .cta {
-        background:
-          linear-gradient(180deg, rgba(255,255,255,.00), rgba(255,255,255,.9) 45%, rgba(255,255,255,.98));
-        box-shadow: 0 -1px 0 var(--border), 0 -10px 30px rgba(0,0,0,.08) inset;
-      }
-    }
-    .cta__inner {
-      max-width: var(--maxw);
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      padding: 0 var(--space);
-    }
-    .cta .btn { width: 100%; padding: 16px 18px; font-size: 17px; }
-
-    /* アクセシビリティ */
-    :focus-visible { outline: 3px solid color-mix(in oklab, var(--accent) 60%, transparent); outline-offset: 2px; }
-    .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-  </style>
+  .cta{
+    position:fixed; left:env(safe-area-inset-left); right:env(safe-area-inset-right); bottom:env(safe-area-inset-bottom);
+    z-index:9; padding:12px 12px calc(14px + env(safe-area-inset-bottom)); backdrop-filter:blur(8px);
+    background: linear-gradient(180deg, rgba(0,0,0,.00), rgba(0,0,0,.18) 35%, rgba(0,0,0,.28));
+  }
+  @media (prefers-color-scheme: light){
+    .cta{ background: linear-gradient(180deg, rgba(255,255,255,.00), rgba(255,255,255,.9) 45%, rgba(255,255,255,.98));
+          box-shadow:0 -1px 0 var(--border), 0 -10px 30px rgba(0,0,0,.08) inset; }
+  }
+  .cta__inner{ max-width:var(--maxw); margin:0 auto; display:grid; grid-template-columns:1fr; gap:10px; padding:0 var(--space) }
+  .cta .btn{ width:100%; padding:16px 18px; font-size:17px }
+  :focus-visible{ outline:3px solid color-mix(in oklab, var(--accent) 60%, transparent); outline-offset:2px }
+</style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <h1>動的生成画像を共有（Web Share API）</h1>
-      <p>スマホ向けUI。共有シートでTwitterアプリ等に画像ファイルを直接渡せます。共有非対応ブラウザは「画像を保存」→手動添付。</p>
+      <h1>問診票画像ジェネレーター（縦長3:4）</h1>
+      <p>フォームに入力＆選択 → 下の「画像を生成」で、問診票風の縦長画像（3:4）をCanvasに描きます。保存やモバイル共有も可能。</p>
     </header>
 
     <section class="card">
       <div class="card__media">
-        <canvas id="cv" width="800" height="418" aria-label="プレビュー画像"></canvas>
+        <!-- 3:4 縦長。内部ピクセルはDPRに合わせて自動調整 -->
+        <canvas id="cv" width="900" height="1200" aria-label="問診票画像プレビュー"></canvas>
       </div>
       <div class="card__body">
-        <div class="field">
-          <label for="txt">共有テキスト（任意）</label>
-          <textarea id="txt" rows="3" placeholder="投稿時に添えるテキストを書けます">#動的画像 テスト投稿</textarea>
-        </div>
-        <div class="btnrow">
-          <button id="btn-redraw" class="btn btn--ghost" type="button">画像を再生成</button>
-          <button id="btn-save" class="btn btn--ghost" type="button">画像を保存</button>
+        <div class="grid">
+          <div class="row2">
+            <div>
+              <label class="title" for="name">氏名</label>
+              <input id="name" type="text" placeholder="例）山田 太郎">
+            </div>
+            <div>
+              <label class="title" for="age">年齢</label>
+              <input id="age" type="text" placeholder="例）34">
+            </div>
+          </div>
+
+          <div>
+            <label class="title">性別（単一選択）</label>
+            <div class="choices">
+              <label class="chip chip--radio"><input type="radio" name="sex" value="男性" checked>男性</label>
+              <label class="chip chip--radio"><input type="radio" name="sex" value="女性">女性</label>
+              <label class="chip chip--radio"><input type="radio" name="sex" value="その他">その他</label>
+              <label class="chip chip--radio"><input type="radio" name="sex" value="無回答">無回答</label>
+            </div>
+          </div>
+
+          <div>
+            <label class="title">主訴（複数選択）</label>
+            <div class="choices" id="chief-choices">
+              <!-- data-label はキャンバス描画用の表示文字 -->
+              <label class="chip"><input type="checkbox" value="発熱" checked>発熱</label>
+              <label class="chip"><input type="checkbox" value="咳">咳</label>
+              <label class="chip"><input type="checkbox" value="喉の痛み" checked>喉の痛み</label>
+              <label class="chip"><input type="checkbox" value="鼻水">鼻水</label>
+              <label class="chip"><input type="checkbox" value="頭痛">頭痛</label>
+              <label class="chip"><input type="checkbox" value="吐き気">吐き気</label>
+              <label class="chip"><input type="checkbox" value="腹痛">腹痛</label>
+              <label class="chip"><input type="checkbox" value="倦怠感">倦怠感</label>
+              <label class="chip"><input type="checkbox" value="関節痛">関節痛</label>
+            </div>
+          </div>
+
+          <div class="row2">
+            <div>
+              <label class="title">発症時期（単一選択）</label>
+              <div class="choices">
+                <label class="chip chip--radio"><input type="radio" name="onset" value="本日" checked>本日</label>
+                <label class="chip chip--radio"><input type="radio" name="onset" value="昨日">昨日</label>
+                <label class="chip chip--radio"><input type="radio" name="onset" value="2〜3日前">2〜3日前</label>
+                <label class="chip chip--radio"><input type="radio" name="onset" value="1週間以上前">1週間以上前</label>
+              </div>
+            </div>
+            <div>
+              <label class="title" for="temp">体温（任意）</label>
+              <input id="temp" type="text" placeholder="例）38.2 ℃">
+            </div>
+          </div>
+
+          <div>
+            <label class="title">既往歴（複数選択）</label>
+            <div class="choices" id="pmh-choices">
+              <label class="chip"><input type="checkbox" value="高血圧">高血圧</label>
+              <label class="chip"><input type="checkbox" value="糖尿病">糖尿病</label>
+              <label class="chip"><input type="checkbox" value="心疾患">心疾患</label>
+              <label class="chip"><input type="checkbox" value="喘息">喘息</label>
+              <label class="chip"><input type="checkbox" value="花粉症">花粉症</label>
+              <label class="chip"><input type="checkbox" value="特記なし" checked>特記なし</label>
+            </div>
+          </div>
+
+          <div class="row2">
+            <div>
+              <label class="title" for="meds">服用中の薬（任意）</label>
+              <input id="meds" type="text" placeholder="例）総合感冒薬、解熱鎮痛薬 など">
+            </div>
+            <div>
+              <label class="title" for="allergy">アレルギー（任意）</label>
+              <input id="allergy" type="text" placeholder="例）ペニシリン、そば など">
+            </div>
+          </div>
+
+          <div>
+            <label class="title" for="detail">症状の詳細・自由記入</label>
+            <textarea id="detail" rows="4" placeholder="例）今朝から寒気と38度台の発熱。咳は少し。水分は摂れている。家族で同様の症状あり。"></textarea>
+          </div>
+
+          <div class="btnrow">
+            <button id="btn-generate" class="btn btn--primary" type="button">画像を生成</button>
+            <button id="btn-save" class="btn btn--ghost" type="button">画像を保存</button>
+          </div>
         </div>
       </div>
     </section>
   </div>
 
-  <!-- 画面下 固定CTA（親指で押しやすい大ボタン） -->
+  <!-- 画面下 固定CTA（親指で押しやすい） -->
   <div class="cta">
     <div class="cta__inner">
-      <button id="btn-share" class="btn btn--primary" type="button">
-        Twitterに共有（共有シート）
-      </button>
+      <button id="btn-share" class="btn btn--primary" type="button">Twitter等に共有（Web Share）</button>
     </div>
   </div>
 
-  <script>
-    // ===== 画面解像度に合わせてCanvasをクリスプに描画（Retina対応） =====
-    const cv = document.getElementById('cv');
-    const ctx = cv.getContext('2d');
+<script>
+  // ========= Canvas 基本：Retina対応（3:4縦長） =========
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
 
-    function fitCanvasToDisplaySize(canvas) {
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
-      const { width: cssW, height: cssH } = canvas.getBoundingClientRect();
-      const displayW = Math.round(cssW * dpr);
-      const displayH = Math.round(cssH * dpr);
-      if (canvas.width !== displayW || canvas.height !== displayH) {
-        canvas.width = displayW;
-        canvas.height = displayH;
-        return true;
+  function fitCanvasToDisplaySize(canvas) {
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const { width: cssW, height: cssH } = canvas.getBoundingClientRect();
+    const displayW = Math.round(cssW * dpr);
+    const displayH = Math.round(cssH * dpr);
+    if (canvas.width !== displayW || canvas.height !== displayH) {
+      canvas.width = displayW;
+      canvas.height = displayH;
+      return true;
+    }
+    return false;
+  }
+
+  // ========= ユーティリティ（描画） =========
+  function roundRectPath(ctx, x, y, w, h, r) {
+    const rr = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr, y);
+    ctx.arcTo(x+w, y, x+w, y+h, rr);
+    ctx.arcTo(x+w, y+h, x, y+h, rr);
+    ctx.arcTo(x, y+h, x, y, rr);
+    ctx.arcTo(x, y, x+w, y, rr);
+    ctx.closePath();
+  }
+
+  function drawHeader(w, h, name, age, sex) {
+    // ヘッダー背景
+    const pad = Math.floor(Math.min(w,h)*0.04);
+    const headH = Math.floor(h*0.12);
+    const x = pad, y = pad, ww = w - pad*2, hh = headH;
+    const g = ctx.createLinearGradient(0,y,0,y+hh);
+    g.addColorStop(0, '#2f81f7'); g.addColorStop(1, '#1f6fe0');
+    ctx.fillStyle = g; roundRectPath(ctx, x, y, ww, hh, Math.floor(hh*0.18)); ctx.fill();
+
+    // タイトル
+    ctx.fillStyle = '#fff';
+    ctx.font = `700 ${Math.round(hh*0.36)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText('問 診 票', x + Math.round(hh*0.5), y + Math.round(hh*0.62));
+
+    // 日付
+    const ts = new Date().toLocaleString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit' });
+    ctx.font = `500 ${Math.round(hh*0.22)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText(ts, x + ww - Math.round(hh*2.1), y + Math.round(hh*0.62));
+
+    // 基本情報枠
+    const baseY = y + hh + Math.round(pad*0.6);
+    const rowH = Math.round(h*0.06);
+    const rows = 2;
+    const infoH = rowH*rows + Math.round(pad*0.8);
+    roundRectPath(ctx, x, baseY, ww, infoH, 12); ctx.fillStyle = 'rgba(0,0,0,0.06)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.lineWidth = Math.max(1, Math.round(h*0.0015)); ctx.stroke();
+
+    ctx.fillStyle = '#0f1720';
+    ctx.font = `600 ${Math.round(rowH*0.42)}px system-ui, "Noto Sans JP"`;
+    const labelY1 = baseY + Math.round(rowH*0.8);
+    const labelY2 = baseY + rowH + Math.round(rowH*0.8);
+    const col1 = x + Math.round(pad*0.8);
+    const col2 = x + Math.round(ww*0.52);
+
+    ctx.fillText('氏名', col1, labelY1);
+    ctx.fillText('年齢 / 性別', col2, labelY1);
+    ctx.font = `500 ${Math.round(rowH*0.42)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText(name || '（未入力）', col1 + Math.round(rowH*2.2), labelY1);
+    ctx.fillText(((age||'—') + ' ／ ' + (sex||'—')), col2 + Math.round(rowH*3.6), labelY1);
+
+    // 2段目：任意で体温やID等に使える
+    ctx.font = `600 ${Math.round(rowH*0.42)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText('ID', col1, labelY2);
+    ctx.font = `500 ${Math.round(rowH*0.42)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText('- - - - - -', col1 + Math.round(rowH*2.2), labelY2);
+
+    return baseY + infoH + Math.round(pad*0.6);
+  }
+
+  function drawSectionTitle(x, y, text, w) {
+    const barH = Math.round(w * 0.01) + 4;
+    ctx.fillStyle = '#2f81f7'; ctx.fillRect(x, y, barH, Math.round(barH*2.2));
+    ctx.fillStyle = '#0f1720';
+    ctx.font = `700 ${Math.round(barH*2.2)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText(text, x + Math.round(barH*1.3), y + Math.round(barH*1.7));
+    return y + Math.round(barH*2.8);
+  }
+
+  function drawChecks(x, startY, w, labels, checkedSet) {
+    const lineH = Math.max(28, Math.round(w*0.035));
+    const box = Math.round(lineH*0.8);
+    const gap = Math.round(lineH*0.45);
+    let y = startY;
+    ctx.lineWidth = Math.max(1, Math.round(lineH*0.06));
+
+    labels.forEach((label) => {
+      // 枠
+      ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+      ctx.strokeRect(x, y - box + Math.round(box*0.1), box, box);
+      // チェック
+      if (checkedSet.has(label)) {
+        ctx.fillStyle = '#2f81f7';
+        ctx.fillRect(x, y - box + Math.round(box*0.1), box, box);
+        ctx.fillStyle = '#fff';
+        ctx.font = `700 ${Math.round(box*0.8)}px system-ui`; ctx.fillText('✓', x + Math.round(box*0.06), y + Math.round(box*0.2));
       }
-      return false;
-    }
-
-    function draw() {
-      fitCanvasToDisplaySize(cv);
-      const w = cv.width, h = cv.height;
-
-      // 背景グラデ
-      const g = ctx.createLinearGradient(0, 0, w, h);
-      g.addColorStop(0, '#0f2027');
-      g.addColorStop(0.5, '#203a43');
-      g.addColorStop(1, '#2c5364');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, w, h);
-
-      // タイトル
-      ctx.fillStyle = 'rgba(255,255,255,.94)';
-      ctx.font = `${Math.round(h * 0.10)}px system-ui, "Noto Sans JP"`;
-      ctx.fillText('動的生成画像', Math.round(w * 0.06), Math.round(h * 0.35));
-
-      // タイムスタンプ
-      const ts = new Date().toLocaleString('ja-JP', { hour12: false });
-      ctx.fillStyle = 'rgba(255,255,255,.9)';
-      ctx.font = `${Math.round(h * 0.055)}px system-ui, "Noto Sans JP"`;
-      ctx.fillText(`Generated at ${ts}`, Math.round(w * 0.06), Math.round(h * 0.50));
-
-      // 透かし
-      ctx.globalAlpha = 0.15;
-      ctx.font = `900 ${Math.round(h * 0.28)}px system-ui`;
-      const text = 'X';
-      const m = ctx.measureText(text);
-      ctx.fillText(text, w - m.width - Math.round(w * 0.05), h - Math.round(h * 0.06));
-      ctx.globalAlpha = 1;
-    }
-
-    // 初期描画＆リサイズ対応
-    const ro = new ResizeObserver(() => draw());
-    ro.observe(cv);
-    window.addEventListener('orientationchange', () => setTimeout(draw, 150));
-    draw();
-
-    // ===== 共有・保存 =====
-    const btnShare = document.getElementById('btn-share');
-    const btnSave  = document.getElementById('btn-save');
-    const btnRedraw = document.getElementById('btn-redraw');
-    const txt = document.getElementById('txt');
-
-    btnRedraw.addEventListener('click', draw);
-
-    btnSave.addEventListener('click', async () => {
-      const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `dynamic_${Date.now()}.png`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      // ラベル
+      ctx.fillStyle = '#0f1720';
+      ctx.font = `500 ${Math.round(lineH*0.58)}px system-ui, "Noto Sans JP"`;
+      ctx.fillText(label, x + box + Math.round(box*0.6), y);
+      y += lineH + gap*0.4;
     });
+    return y;
+  }
 
-    function canUseShareWithFiles() {
-      if (!('share' in navigator)) return false;
-      try {
-        const test = new File(["x"], "x.txt", { type: "text/plain" });
-        return typeof navigator.canShare !== 'function' || navigator.canShare({ files: [test] });
-      } catch { return false; }
-    }
-
-    if (!canUseShareWithFiles()) {
-      btnShare.disabled = true;
-      btnShare.textContent = '共有非対応のブラウザです（画像を保存→手動投稿）';
-    }
-
-    btnShare.addEventListener('click', async () => {
-      try {
-        const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
-        const file = new File([blob], 'image.png', { type: 'image/png' });
-        await navigator.share({ text: txt.value || '', files: [file] });
-      } catch (e) {
-        if (e && e.name === 'AbortError') return; // ユーザー中断
-        alert('共有に失敗しました: ' + (e?.message || e));
+  function drawRadios(x, startY, w, name, value) {
+    const options = { sex:['男性','女性','その他','無回答'], onset:['本日','昨日','2〜3日前','1週間以上前'] };
+    const items = options[name] || [];
+    const lineH = Math.max(28, Math.round(w*0.035));
+    const r = Math.round(lineH*0.45);
+    const gap = Math.round(lineH*0.45);
+    let y = startY;
+    ctx.lineWidth = Math.max(1, Math.round(lineH*0.06));
+    items.forEach((label)=>{
+      // 円
+      ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+      ctx.beginPath(); ctx.arc(x + r, y - r + Math.round(r*0.1), r, 0, Math.PI*2); ctx.stroke();
+      if (value === label) {
+        ctx.fillStyle = '#2f81f7';
+        ctx.beginPath(); ctx.arc(x + r, y - r + Math.round(r*0.1), Math.round(r*0.6), 0, Math.PI*2); ctx.fill();
       }
-    }, { passive: true });
-  </script>
+      // ラベル
+      ctx.fillStyle = '#0f1720';
+      ctx.font = `500 ${Math.round(lineH*0.58)}px system-ui, "Noto Sans JP"`;
+      ctx.fillText(label, x + r*2 + Math.round(r*0.6), y);
+      y += lineH + gap*0.4;
+    });
+    return y;
+  }
+
+  function drawMultiLineText(x, y, w, text, linePx, maxLines=8) {
+    const words = (text||'').split('');
+    let line = '', lines=[];
+    words.forEach(ch=>{
+      const m = ctx.measureText(line + ch);
+      if (m.width > w && line) { lines.push(line); line = ch; }
+      else { line += ch; }
+    });
+    if (line) lines.push(line);
+    lines.slice(0, maxLines).forEach((ln, i)=>{
+      ctx.fillText(ln, x, y + i*linePx);
+    });
+    return y + Math.min(lines.length, maxLines)*linePx;
+  }
+
+  // ========= 値の取得 =========
+  const $ = (sel)=>document.querySelector(sel);
+  function getRadio(name){ const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : '' }
+  function getChecks(containerId){
+    const set = new Set(); const box = document.getElementById(containerId);
+    box.querySelectorAll('input[type="checkbox"]').forEach(ch => { if (ch.checked) set.add(ch.value) });
+    return set;
+  }
+
+  // ========= メイン描画 =========
+  function drawFromForm(){
+    fitCanvasToDisplaySize(cv);
+    const w = cv.width, h = cv.height;
+    ctx.clearRect(0,0,w,h);
+
+    // 用紙背景
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,w,h);
+    // 用紙影
+    const shadow = ctx.createLinearGradient(0,0,w,h);
+    shadow.addColorStop(0,'rgba(0,0,0,0.06)'); shadow.addColorStop(1,'rgba(0,0,0,0.03)');
+    ctx.fillStyle = shadow; ctx.fillRect(0,0,w,Math.round(h*0.008)); ctx.fillRect(0,h-Math.round(h*0.008),w,Math.round(h*0.008));
+
+    const name = $('#name').value.trim();
+    const age  = $('#age').value.trim();
+    const sex  = getRadio('sex');
+    const onset = getRadio('onset');
+    const temp = $('#temp').value.trim();
+    const meds = $('#meds').value.trim();
+    const allergy = $('#allergy').value.trim();
+    const chief = getChecks('chief-choices');
+    const pmh = getChecks('pmh-choices');
+    const detail = $('#detail').value.trim();
+
+    let y = drawHeader(w, h, name, age, sex);
+
+    const padX = Math.round(Math.min(w,h)*0.06);
+    const colW = w - padX*2;
+    const gapY = Math.round(h*0.02);
+    ctx.fillStyle = '#0f1720';
+
+    // 主訴
+    y = drawSectionTitle(padX, y, '主訴', w);
+    y = drawChecks(padX + 8, y + 8, w, Array.from(document.querySelectorAll('#chief-choices input')).map(i=>i.value), chief);
+    y += gapY;
+
+    // 発症時期・体温
+    y = drawSectionTitle(padX, y, '発症時期・体温', w);
+    let yy = drawRadios(padX + 8, y + 8, w, 'onset', onset);
+    // 体温右側表示
+    ctx.font = `600 ${Math.round(colW*0.035)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText('体温', padX + Math.round(colW*0.55), y + Math.round(colW*0.07));
+    ctx.font = `500 ${Math.round(colW*0.035)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText(temp || '—', padX + Math.round(colW*0.55) + Math.round(colW*0.12), y + Math.round(colW*0.07));
+    y = Math.max(yy, y + Math.round(colW*0.12));
+    y += gapY;
+
+    // 既往歴
+    y = drawSectionTitle(padX, y, '既往歴', w);
+    y = drawChecks(padX + 8, y + 8, w, Array.from(document.querySelectorAll('#pmh-choices input')).map(i=>i.value), pmh);
+    y += gapY;
+
+    // 薬・アレルギー
+    y = drawSectionTitle(padX, y, '服用中の薬・アレルギー', w);
+    ctx.font = `600 ${Math.round(colW*0.035)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText('服用中の薬', padX + 8, y + Math.round(colW*0.06));
+    ctx.font = `500 ${Math.round(colW*0.035)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText(meds || '—', padX + Math.round(colW*0.2), y + Math.round(colW*0.06));
+    ctx.font = `600 ${Math.round(colW*0.035)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText('アレルギー', padX + 8, y + Math.round(colW*0.12));
+    ctx.font = `500 ${Math.round(colW*0.035)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText(allergy || '—', padX + Math.round(colW*0.2), y + Math.round(colW*0.12));
+    y += Math.round(colW*0.16);
+    y += gapY;
+
+    // 自由記入
+    y = drawSectionTitle(padX, y, '症状の詳細（自由記入）', w);
+    const boxH = Math.round(h*0.18);
+    roundRectPath(ctx, padX + 6, y + 6, colW - 12, boxH, 10);
+    ctx.fillStyle = 'rgba(0,0,0,0.04)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.stroke();
+    ctx.fillStyle = '#0f1720';
+    ctx.font = `500 ${Math.round(colW*0.035)}px system-ui, "Noto Sans JP"`;
+    drawMultiLineText(padX + 18, y + 18 + Math.round(colW*0.035), colW - 36, detail || '—', Math.round(colW*0.05), 7);
+    y += boxH + gapY;
+
+    // フッター（署名欄）
+    const footH = Math.round(h*0.09);
+    roundRectPath(ctx, padX, h - footH - Math.round(colW*0.02), colW, footH, 10);
+    ctx.fillStyle = 'rgba(0,0,0,0.035)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.stroke();
+    ctx.fillStyle = '#0f1720';
+    ctx.font = `600 ${Math.round(footH*0.28)}px system-ui, "Noto Sans JP"`;
+    const baseY = h - footH - Math.round(colW*0.02) + Math.round(footH*0.55);
+    ctx.fillText('署名', padX + 16, baseY);
+    ctx.font = `500 ${Math.round(footH*0.28)}px system-ui, "Noto Sans JP"`;
+    ctx.fillText(name || '（署名）', padX + 16 + Math.round(footH*1.2), baseY);
+  }
+
+  // 初期描画＆サイズ追従
+  const ro = new ResizeObserver(()=>drawFromForm());
+  ro.observe(cv);
+  window.addEventListener('orientationchange', ()=>setTimeout(drawFromForm, 150));
+  drawFromForm();
+
+  // ========= ボタン動作 =========
+  const btnGen = document.getElementById('btn-generate');
+  const btnSave = document.getElementById('btn-save');
+  const btnShare = document.getElementById('btn-share');
+
+  btnGen.addEventListener('click', drawFromForm);
+
+  btnSave.addEventListener('click', async ()=>{
+    const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `問診票_${Date.now()}.png`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  function canUseShareWithFiles(){
+    if (!('share' in navigator)) return false;
+    try {
+      const test = new File(["x"], "x.txt", { type:"text/plain" });
+      return typeof navigator.canShare !== 'function' || navigator.canShare({ files:[test] });
+    } catch { return false; }
+  }
+  if (!canUseShareWithFiles()){
+    btnShare.disabled = true;
+    btnShare.textContent = '共有非対応のブラウザです（保存→手動投稿）';
+  }
+
+  btnShare.addEventListener('click', async ()=>{
+    try{
+      const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+      const file = new File([blob], 'monshin.png', { type:'image/png' });
+      await navigator.share({ text:'問診票画像', files:[file] });
+    }catch(e){
+      if (e && e.name === 'AbortError') return;
+      alert('共有に失敗しました: ' + (e?.message || e));
+    }
+  }, { passive:true });
+</script>
 </body>
 </html>
