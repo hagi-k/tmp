@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<title>問診票画像（CONFIG一元管理 / 基本フォント20px）</title>
+<title>問診票画像（紙風フレーム&グロー / CONFIG一元管理）</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light dark" />
 <style>
@@ -52,8 +52,8 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>問診票画像（CONFIG一元管理 / 基本フォント20px）</h1>
-      <p>フォームと描画はCONFIGで一元制御。**基本フォントサイズは20px**に統一しています。</p>
+      <h1>問診票画像（紙風フレーム&グロー / CONFIG一元管理）</h1>
+      <p>白い“紙”に薄いグレー枠、右下だけに柔らかい影を付けて紙質感を演出。フォーム＆描画はCONFIGで一元管理、変更は即時反映。</p>
     </header>
 
     <!-- フォーム自動生成 -->
@@ -76,21 +76,33 @@
 
 <script>
   // ==================== CONFIG（UI/描画を一元管理） ====================
-  // 基本フォントサイズは 20px。見出し（セクションタイトルなど）は視認性のため一部 20〜24px.
   const CONFIG = {
-    canvas: { background: "#ffffff", padding: 60 },
+    canvas: {
+      // “紙”の見た目設定
+      paper: {
+        inset: 24,            // キャンバス外周からの余白
+        radius: 16,           // 角丸
+        borderColor: "#e6e8ec", // 薄いグレー枠
+        borderWidth: 2,
+        // 右と下にだけ乗る柔らかい影（グロー）
+        shadow: { offsetX: 10, offsetY: 12, blur: 28, color: "rgba(0,0,0,0.14)" },
+        // 紙面の微妙なトーン（ごく薄いグラデで紙っぽさ）
+        toneTop: "rgba(0,0,0,0.03)",   // 上端のごく薄いシェード
+        toneBottom: "rgba(0,0,0,0.02)" // 下端のごく薄いシェード
+      },
+      padding: 60 // 紙の内側にとる内容余白（レイアウト計算に使用）
+    },
     header: {
-      // 見出しは少し大きめ（24〜36）でもOKですが、要望に合わせ20系へ寄せています
-      title: { text: "問診票", x: 60, y: 90, bar: { w: 10, h: 36, color: "#2f81f7" }, font: { size: 24, weight: 800, color: "#0f1720" } },
+      title: { text: "問診票", x: 60, y: 120, bar: { w: 10, h: 36, color: "#2f81f7" }, font: { size: 24, weight: 800, color: "#0f1720" } },
       date:  { show:true, xRight: 60, font:{ size:20, weight:600, color:"#0f1720" } },
-      basicsLineY: 210, basicsLineColor: "rgba(0,0,0,0.18)", basicsLineWidth: 2
+      basicsLineY: 240, basicsLineColor: "rgba(0,0,0,0.12)", basicsLineWidth: 2
     },
     sections: [
       {
         title: "基本情報",
         fields: [
           { id:"name",  kind:"text", label:"氏名", default:"",
-            layout:{ type:"pair", xLabel:60, xValue:180, y:170,
+            layout:{ type:"pair", xLabel:60, xValue:180, y:200,
                      font:{ labelSize:20, valueSize:20, labelWeight:600, valueWeight:500, color:"#0f1720" },
                      fallback:"（未入力）" }
           },
@@ -98,7 +110,7 @@
           { id:"sex",   kind:"radio", label:"性別（単一選択）",
             options:["男性","女性","その他","無回答"], default:"無回答",
             layout:{ type:"pair-computed",
-                     xLabel:60+Math.round(700*0.52), xValue:60+Math.round(700*0.52)+120, y:170,
+                     xLabel:60+Math.round(700*0.52), xValue:60+Math.round(700*0.52)+120, y:200,
                      font:{ labelSize:20, valueSize:20, labelWeight:600, valueWeight:500, color:"#0f1720" },
                      labelText:"年齢 / 性別",
                      compute: (vals)=>`${vals.age||'—'} ／ ${vals.sex||'—'}` }
@@ -112,8 +124,8 @@
             options:["発熱","咳","喉の痛み","鼻水","頭痛","吐き気","腹痛","倦怠感","関節痛"],
             default:["発熱","喉の痛み"],
             layout:{ type:"checkbox-list",
-                     title:{text:"主訴", x:60, y:250, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
-                     x:68, y:285, boxSize:20, textSize:20, lineGap:14,
+                     title:{text:"主訴", x:60, y:300, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
+                     x:68, y:335, boxSize:20, textSize:20, lineGap:14,
                      color:{ box:"rgba(0,0,0,0.35)", fill:"#2f81f7", check:"#fff", text:"#0f1720" } }
           }
         ]
@@ -123,10 +135,9 @@
         fields: [
           { id:"onset", kind:"radio", label:"発症時期", options:["本日","昨日","2〜3日前","1週間以上前"], default:"本日",
             layout:{ type:"radio-list",
-                     title:{text:"発症時期・体温", x:60, y:480, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
-                     x:68, y:515, radius:10, textSize:20, lineGap:14,
+                     title:{text:"発症時期・体温", x:60, y:520, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
+                     x:68, y:555, radius:10, textSize:20, lineGap:14,
                      color:{ ring:"rgba(0,0,0,0.35)", dot:"#2f81f7", text:"#0f1720" },
-                     // 右側の体温表示も20pxに
                      tempRight:{ id:"temp", label:"体温", xRel:0.55,
                                  fontLabel:{ size:20, weight:700 }, fontValue:{ size:20, weight:500 } } }
           },
@@ -139,8 +150,8 @@
           { id:"pmh", kind:"checkbox", label:"既往歴",
             options:["高血圧","糖尿病","心疾患","喘息","花粉症","特記なし"], default:["特記なし"],
             layout:{ type:"checkbox-list",
-                     title:{text:"既往歴", x:60, y:720, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
-                     x:68, y:755, boxSize:20, textSize:20, lineGap:14,
+                     title:{text:"既往歴", x:60, y:760, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
+                     x:68, y:795, boxSize:20, textSize:20, lineGap:14,
                      color:{ box:"rgba(0,0,0,0.35)", fill:"#2f81f7", check:"#fff", text:"#0f1720" } }
           }
         ]
@@ -149,11 +160,11 @@
         title: "服薬・アレルギー",
         fields: [
           { id:"meds", kind:"text", label:"服用中の薬（任意）", default:"",
-            layout:{ type:"inline-label", label:"服用中の薬", xLabel:68, xValue:68+140, y:980,
+            layout:{ type:"inline-label", label:"服用中の薬", xLabel:68, xValue:68+140, y:1020,
                      fontLabel:{size:20,weight:700}, fontValue:{size:20,weight:500} }
           },
           { id:"allergy", kind:"text", label:"アレルギー（任意）", default:"",
-            layout:{ type:"inline-label", label:"アレルギー", xLabel:68, xValue:68+140, y:1020,
+            layout:{ type:"inline-label", label:"アレルギー", xLabel:68, xValue:68+140, y:1060,
                      fontLabel:{size:20,weight:700}, fontValue:{size:20,weight:500} }
           }
         ]
@@ -163,8 +174,8 @@
         fields: [
           { id:"detail", kind:"textarea", label:"症状の詳細（自由記入）", default:"",
             layout:{ type:"textarea-box",
-                     title:{text:"症状の詳細（自由記入）", x:60, y:1080, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
-                     x:68, y:1115, wRel:1.0, hRel:0.18, radius:10,
+                     title:{text:"症状の詳細（自由記入）", x:60, y:1120, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
+                     x:68, y:1155, wRel:1.0, hRel:0.18, radius:10,
                      font:{size:20,weight:500,color:"#0f1720"}, lines:7 }
           }
         ]
@@ -172,17 +183,15 @@
       {
         title: "署名",
         fields: [
-          { id:"signature", kind:"computed", label:"署名", default:"",
-            // 署名もほぼ20px相当になるよう相対値を調整（1200px高なら ≈20px）
-            layout:{ type:"signature", yRelFromBottom:0.09,
-                     fontLabel:{sizeRel:0.017, weight:700}, fontValue:{sizeRel:0.017, weight:500} }
+          { id:"signature", kind:"computed", label:"署名",
+            layout:{ type:"signature", yRelFromBottom:0.09, fontLabel:{sizeRel:0.017, weight:700}, fontValue:{sizeRel:0.017, weight:500} }
           }
         ]
       }
     ]
   };
 
-  // ===================== UI 生成（CONFIG→HTML） =====================
+  // ============ UI生成（CONFIG→HTML） ============
   const formRoot = document.getElementById('form-root');
   function renderFormFromConfig() {
     formRoot.innerHTML = "";
@@ -236,7 +245,7 @@
     });
   }
 
-  // ===================== 値の取得 =====================
+  // ============ 値取得 ============
   function getValues() {
     const vals = {};
     CONFIG.sections.flatMap(s => s.fields).forEach(f => {
@@ -252,7 +261,7 @@
     return vals;
   }
 
-  // ===================== Canvas 描画 =====================
+  // ============ Canvas描画 ============
   const cv = document.getElementById('cv');
   const ctx = cv.getContext('2d');
 
@@ -266,7 +275,45 @@
     }
     return false;
   }
-  function rr(x,y,w,h,r){ const rr=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+rr,y); ctx.arcTo(x+w,y,x+w,y+h,rr); ctx.arcTo(x+w,y+h,x,y+h,rr); ctx.arcTo(x,y+h,x,y,rr); ctx.arcTo(x,y,x+w,y,rr); ctx.closePath(); }
+  function rr(x,y,w,h,r){ const rad=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+rad,y); ctx.arcTo(x+w,y,x+w,y+h,rad); ctx.arcTo(x+w,y+h,x,y+h,rad); ctx.arcTo(x,y+h,x,y,rad); ctx.arcTo(x,y,x+w,y,rad); ctx.closePath(); }
+
+  // 紙の描画（白、薄いグレー枠、右&下の柔らかい影、微グラデで紙っぽさ）
+  function drawPaper() {
+    const p = CONFIG.canvas.paper;
+    const x = p.inset, y = p.inset, w = cv.width - p.inset*2, h = cv.height - p.inset*2;
+
+    // 影は右下だけを強調（オフセット＋ブラー）
+    ctx.save();
+    ctx.shadowColor = p.shadow.color;
+    ctx.shadowBlur = p.shadow.blur;
+    ctx.shadowOffsetX = p.shadow.offsetX;
+    ctx.shadowOffsetY = p.shadow.offsetY;
+
+    // 白塗りの紙本体
+    rr(x, y, w, h, p.radius);
+    ctx.fillStyle = "#ffffff";
+    ctx.fill();
+    ctx.restore();
+
+    // 紙の微トーン（上部わずかに暗く、下部にほんのり）
+    const topGrad = ctx.createLinearGradient(0, y, 0, y + Math.min(80, h*0.08));
+    topGrad.addColorStop(0, p.toneTop);
+    topGrad.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.save(); rr(x, y, w, h, p.radius); ctx.clip();
+    ctx.fillStyle = topGrad; ctx.fillRect(x, y, w, Math.min(80, h*0.08));
+
+    const botGrad = ctx.createLinearGradient(0, y+h - Math.min(100, h*0.1), 0, y+h);
+    botGrad.addColorStop(0, "rgba(255,255,255,0)");
+    botGrad.addColorStop(1, p.toneBottom);
+    ctx.fillStyle = botGrad; ctx.fillRect(x, y+h - Math.min(100, h*0.1), w, Math.min(100, h*0.1));
+    ctx.restore();
+
+    // 薄いグレー枠
+    ctx.strokeStyle = p.borderColor;
+    ctx.lineWidth = p.borderWidth;
+    rr(x, y, w, h, p.radius);
+    ctx.stroke();
+  }
 
   function findField(id){ return CONFIG.sections.flatMap(s=>s.fields).find(f=>f.id===id) }
 
@@ -279,14 +326,17 @@
     // 日付
     if (date?.show){
       const ts = new Date().toLocaleString('ja-JP', {year:'numeric',month:'2-digit',day:'2-digit'});
-      const w = ctx.measureText(ts).width;
+      const tw = ctx.measureText(ts).width;
       ctx.font = `${date.font.weight} ${date.font.size}px system-ui, "Noto Sans JP"`;
       ctx.fillStyle = date.font.color;
-      ctx.fillText(ts, cv.width - date.xRight - w, title.y);
+      ctx.fillText(ts, cv.width - CONFIG.canvas.paper.inset - date.xRight - tw + date.xRight, title.y);
     }
     // 下線
     ctx.strokeStyle = basicsLineColor; ctx.lineWidth = basicsLineWidth;
-    ctx.beginPath(); ctx.moveTo(CONFIG.canvas.padding, basicsLineY); ctx.lineTo(cv.width - CONFIG.canvas.padding, basicsLineY); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(CONFIG.canvas.paper.inset + 36, basicsLineY);
+    ctx.lineTo(cv.width - CONFIG.canvas.paper.inset - 36, basicsLineY);
+    ctx.stroke();
 
     // 氏名（左列）
     const nameField = findField('name'); const pair = nameField.layout;
@@ -320,7 +370,8 @@
       ctx.strokeRect(lay.x, y - lay.boxSize + 4, lay.boxSize, lay.boxSize);
       if (checkedSet.has(lb)){
         ctx.fillStyle = lay.color.fill; ctx.fillRect(lay.x, y - lay.boxSize + 4, lay.boxSize, lay.boxSize);
-        ctx.fillStyle = lay.color.check; ctx.font = `700 ${Math.round(lay.boxSize*0.8)}px system-ui`; ctx.fillText('✓', lay.x + 2, y + Math.round(lay.boxSize*0.2));
+        ctx.fillStyle = lay.color.check; ctx.font = `700 ${Math.round(lay.boxSize*0.8)}px system-ui`;
+        ctx.fillText('✓', lay.x + 2, y + Math.round(lay.boxSize*0.2));
       }
       ctx.fillStyle = lay.color.text; ctx.font = `500 ${lay.textSize}px system-ui, "Noto Sans JP"`;
       ctx.fillText(lb, lay.x + lay.boxSize + 10, y + Math.round(lay.textSize*0.15));
@@ -354,8 +405,8 @@
 
   function drawTextareaBox(lay, text){
     const padX = CONFIG.canvas.padding;
-    const width = Math.round(cv.width - padX*2);
-    const w = Math.round(width * (lay.wRel || 1)) - 12;
+    const usableW = (cv.width - CONFIG.canvas.paper.inset*2) - padX*0; // 余白は別計算でもOK
+    const innerW = Math.round(usableW * (lay.wRel || 1)) - 12;
     const h = Math.round(cv.height * (lay.hRel || 0.18));
     if (lay.title){
       ctx.fillStyle = lay.title.font.color;
@@ -363,15 +414,15 @@
       ctx.font = `${lay.title.font.weight} ${lay.title.font.size}px system-ui, "Noto Sans JP"`;
       ctx.fillText(lay.title.text, lay.title.x + lay.title.bar.w + 12, lay.title.y);
     }
-    rr(lay.x, lay.y + 10, w, h, lay.radius||10);
+    rr(lay.x, lay.y + 10, innerW, h, lay.radius||10);
     ctx.fillStyle = 'rgba(0,0,0,0.04)'; ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,0,0,0.12)'; ctx.stroke();
 
     ctx.fillStyle = lay.font.color;
     ctx.font = `${lay.font.weight} ${lay.font.size}px system-ui, "Noto Sans JP"`;
     const maxLines = lay.lines || 7;
     const linePx = Math.round(lay.font.size * 1.4);
-    wrapAndDrawText(text || '—', lay.x + 12, lay.y + 22 + lay.font.size, w - 24, linePx, maxLines);
+    wrapAndDrawText(text || '—', lay.x + 12, lay.y + 22 + lay.font.size, innerW - 24, linePx, maxLines);
   }
 
   function wrapAndDrawText(text, x, y, maxW, linePx, maxLines){
@@ -388,30 +439,29 @@
     const y = cv.height - Math.round(cv.height * lay.yRelFromBottom);
     ctx.fillStyle = '#0f1720';
     ctx.font = `${lay.fontLabel.weight} ${Math.round(cv.height * lay.fontLabel.sizeRel)}px system-ui, "Noto Sans JP"`;
-    ctx.fillText('署名：', padX + 10, y);
+    ctx.fillText('署名：', CONFIG.canvas.paper.inset + padX - 50, y);
     ctx.font = `${lay.fontValue.weight} ${Math.round(cv.height * lay.fontValue.sizeRel)}px system-ui, "Noto Sans JP"`;
-    ctx.fillText(getValues().name || '（署名）', padX + 10 + Math.round(cv.height * lay.fontValue.sizeRel * 5), y);
+    ctx.fillText(getValues().name || '（署名）', CONFIG.canvas.paper.inset + padX + 50, y);
   }
 
   function drawFromConfig(){
     fitCanvasToDisplaySize(cv);
     ctx.clearRect(0,0,cv.width,cv.height);
-    ctx.fillStyle = CONFIG.canvas.background; ctx.fillRect(0,0,cv.width,cv.height);
 
+    // 1) 紙（白＋薄枠＋右下グロー）
+    drawPaper();
+
+    // 2) 内容
     const vals = getValues();
-
-    // ヘッダ＆基本情報
     drawTitleArea(vals);
 
-    // 主訴
     { const f = findField('chief'); const lay = f.layout; const set = new Set(vals.chief||[]); drawCheckboxList(lay, f.options, set); }
 
-    // 発症時期＋体温
     { const f = findField('onset'); const lay = f.layout; drawRadioList(lay, f.options, vals.onset);
       if (lay.tempRight && findField('temp')){
         const padX = CONFIG.canvas.padding;
-        const colW = cv.width - padX*2;
-        const xLabel = padX + Math.round(colW * lay.tempRight.xRel);
+        const colW = cv.width - CONFIG.canvas.paper.inset*2 - padX*0;
+        const xLabel = CONFIG.canvas.paper.inset + Math.round(colW * lay.tempRight.xRel);
         const yLabel = lay.title.y + Math.round(colW * 0.08);
         ctx.fillStyle = '#0f1720';
         ctx.font = `${lay.tempRight.fontLabel.weight} ${lay.tempRight.fontLabel.size}px system-ui, "Noto Sans JP"`;
@@ -421,27 +471,23 @@
       }
     }
 
-    // 既往歴
     { const f = findField('pmh'); const lay = f.layout; const set = new Set(vals.pmh||[]); drawCheckboxList(lay, f.options, set); }
 
-    // 服薬・アレルギー
     ['meds','allergy'].forEach(id=>{
       const f = findField(id); const lay = f.layout;
       ctx.fillStyle = '#0f1720';
       ctx.font = `${lay.fontLabel.weight} ${lay.fontLabel.size}px system-ui, "Noto Sans JP"`;
       ctx.fillText(lay.label, lay.xLabel, lay.y);
       ctx.font = `${lay.fontValue.weight} ${lay.fontValue.size}px system-ui, "Noto Sans JP"`;
-      ctx.fillText((getValues()[id] || '—'), lay.xValue, lay.y);
+      ctx.fillText((vals[id] || '—'), lay.xValue, lay.y);
     });
 
-    // 自由記入
-    { const f = findField('detail'); drawTextareaBox(f.layout, getValues().detail); }
+    { const f = findField('detail'); drawTextareaBox(f.layout, vals.detail); }
 
-    // 署名
     drawSignature(vals);
   }
 
-  // ===================== 即時反映 & 初期化 =====================
+  // ============ 即時反映 & 初期化 ============
   function wireLiveRedraw() {
     document.body.addEventListener('input', e=>{
       if (e.target.closest('input, textarea')) requestAnimationFrame(drawFromConfig);
@@ -454,7 +500,7 @@
     window.addEventListener('orientationchange', ()=>setTimeout(drawFromConfig, 120));
   }
 
-  // ===================== 保存・共有 =====================
+  // ============ 保存・共有 ============
   const btnSave = document.getElementById('btn-save');
   const btnShare = document.getElementById('btn-share');
 
@@ -480,7 +526,7 @@
     }catch(e){ if (e?.name==='AbortError') return; alert('共有に失敗しました: ' + (e?.message||e)); }
   }, { passive:true });
 
-  // ===================== 起動 =====================
+  // ============ 起動 ============
   renderFormFromConfig();
   CONFIG.sections.flatMap(s=>s.fields).forEach(f=>{
     if ((f.kind==='text' || f.kind==='textarea') && f.default!=null){
