@@ -1,0 +1,34 @@
+<!doctype html><meta charset="utf-8">
+<title>Canvas画像を共有（Web Share API）</title>
+<canvas id="cv" width="800" height="418" style="border:1px solid #ccc"></canvas>
+<button id="share">Twitterに共有（共有シート）</button>
+<script>
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+
+  // 適当な描画
+  ctx.fillStyle = '#222'; ctx.fillRect(0,0,800,418);
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 40px system-ui,"Noto Sans JP"';
+  ctx.fillText('動的生成画像', 40, 120);
+
+  document.getElementById('share').addEventListener('click', async () => {
+    try {
+      // Canvas → Blob → File
+      const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+      const file = new File([blob], 'image.png', { type: 'image/png' });
+
+      if (!('share' in navigator)) {
+        alert('このブラウザは共有シートに対応していません。画像を保存してTwitterで添付してください。');
+        return;
+      }
+      // 共有（ユーザーの操作でTwitterアプリを選択）
+      await navigator.share({
+        text: '動的画像のテスト投稿',
+        files: [file]
+      });
+    } catch (e) {
+      console.error(e);
+      alert('共有に失敗しました: ' + e.message);
+    }
+  });
+</script>
