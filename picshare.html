@@ -118,7 +118,7 @@
     header: {
       title: { text: "問診票", x: 60, y: 120, bar: { w: 10, h: 36, color: "#2f81f7" }, font: { size: 24, weight: 800, color: "#0f1720" } },
       date:  { show:true, xRight: 60, font:{ size:20, weight:600, color:"#0f1720" } },
-      basicsLineY: 240, basicsLineColor: "rgba(0,0,0,0.12)", basicsLineWidth: 2
+      basicsLineY: 220, basicsLineColor: "rgba(0,0,0,0.12)", basicsLineWidth: 2
     },
     sections: [
       {
@@ -147,8 +147,8 @@
             options:["発熱","咳","喉の痛み","鼻水","頭痛","吐き気","腹痛","倦怠感","関節痛"],
             default:["発熱","喉の痛み"],
             layout:{ type:"checkbox-list",
-                     title:{text:"主訴", x:60, y:300, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
-                     x:68, y:335, boxSize:20, textSize:20, lineGap:14,
+                     title:{text:"主訴", x:60, y:260, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
+                     x:68, y:295, boxSize:20, textSize:20, lineGap:14,
                      color:{ box:"rgba(0,0,0,0.35)", fill:"#2f81f7", check:"#fff", text:"#0f1720" } }
           }
         ]
@@ -158,8 +158,8 @@
         fields: [
           { id:"onset", kind:"radio", label:"発症時期", options:["本日","昨日","2〜3日前","1週間以上前"], default:"本日",
             layout:{ type:"radio-list",
-                     title:{text:"発症時期・体温", x:60, y:520, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
-                     x:68, y:555, radius:10, textSize:20, lineGap:14,
+                     title:{text:"発症時期・体温", x:60, y:585, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
+                     x:68, y:610, radius:10, textSize:20, lineGap:14,
                      color:{ ring:"rgba(0,0,0,0.35)", dot:"#2f81f7", text:"#0f1720" },
                      tempRight:{ id:"temp", label:"体温", xRel:0.55,
                                  fontLabel:{ size:20, weight:700 }, fontValue:{ size:20, weight:500 } } }
@@ -200,14 +200,6 @@
                      title:{text:"症状の詳細（自由記入）", x:60, y:1120, bar:{w:6,h:18,color:"#2f81f7"}, font:{size:20,weight:800,color:"#0f1720"}},
                      x:68, y:1155, wRel:1.0, hRel:0.18, radius:10,
                      font:{size:20,weight:500,color:"#0f1720"}, lines:7 }
-          }
-        ]
-      },
-      {
-        title: "署名",
-        fields: [
-          { id:"signature", kind:"computed", label:"署名",
-            layout:{ type:"signature", yRelFromBottom:0.09, fontLabel:{sizeRel:0.017, weight:700}, fontValue:{sizeRel:0.017, weight:500} }
           }
         ]
       }
