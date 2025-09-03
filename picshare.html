@@ -1,34 +1,310 @@
-<!doctype html><meta charset="utf-8">
-<title>Canvas画像を共有（Web Share API）</title>
-<canvas id="cv" width="800" height="418" style="border:1px solid #ccc"></canvas>
-<button id="share">Twitterに共有（共有シート）</button>
-<script>
-  const cv = document.getElementById('cv');
-  const ctx = cv.getContext('2d');
-
-  // 適当な描画
-  ctx.fillStyle = '#222'; ctx.fillRect(0,0,800,418);
-  ctx.fillStyle = '#fff'; ctx.font = 'bold 40px system-ui,"Noto Sans JP"';
-  ctx.fillText('動的生成画像', 40, 120);
-
-  document.getElementById('share').addEventListener('click', async () => {
-    try {
-      // Canvas → Blob → File
-      const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
-      const file = new File([blob], 'image.png', { type: 'image/png' });
-
-      if (!('share' in navigator)) {
-        alert('このブラウザは共有シートに対応していません。画像を保存してTwitterで添付してください。');
-        return;
-      }
-      // 共有（ユーザーの操作でTwitterアプリを選択）
-      await navigator.share({
-        text: '動的画像のテスト投稿',
-        files: [file]
-      });
-    } catch (e) {
-      console.error(e);
-      alert('共有に失敗しました: ' + e.message);
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <title>動的生成画像 → X(Twitter) 共有（モバイル最適）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    /* ===== ベース（モバイル最適＆ダークモード） ===== */
+    :root {
+      --bg: #0e1116;
+      --fg: #e7eaee;
+      --muted: #97a1ad;
+      --card: #161b22;
+      --border: #2b3138;
+      --accent: #2f81f7;
+      --accent-press: #1f6fe0;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --space: clamp(14px, 3.5vw, 22px);
+      --maxw: 720px;
     }
-  });
-</script>
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f7f9;
+        --fg: #0f1720;
+        --muted: #5b6776;
+        --card: #ffffff;
+        --border: #e5e7eb;
+        --shadow: 0 10px 30px rgba(0,0,0,.08);
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      color: var(--fg);
+      background:
+        radial-gradient(1200px 400px at 50% -120px, rgba(47,129,247,.25), transparent 60%),
+        var(--bg);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 68px) env(safe-area-inset-left);
+    }
+
+    /* ===== レイアウト ===== */
+    .wrap {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: var(--space);
+    }
+    header h1 {
+      margin: 0 0 8px;
+      font-size: clamp(20px, 5vw, 28px);
+      letter-spacing: .02em;
+    }
+    header p {
+      margin: 0 0 var(--space);
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .card__media {
+      /* 800x418に近い長方形比率。高さは画面幅に追随 */
+      aspect-ratio: 800 / 418;
+      display: block;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.06));
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    canvas {
+      width: 100%; /* CSSピクセル幅 */
+      height: 100%;
+      display: block;
+    }
+
+    .card__body {
+      padding: clamp(12px, 3.2vw, 18px);
+      display: grid;
+      gap: 12px;
+    }
+    .field label {
+      display: block;
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--fg);
+      border-radius: 10px;
+      font-size: 16px; /* ズーム防止 */
+      padding: 12px 14px;
+      outline: none;
+    }
+    textarea:focus, input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
+    }
+
+    .btnrow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .btn {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: transform .04s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
+      box-shadow: 0 6px 18px rgba(0,0,0,.12);
+    }
+    .btn:active { transform: translateY(1px) scale(.99); }
+    .btn--primary {
+      color: white;
+      background: linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 88%, black));
+    }
+    .btn--primary:active { background: linear-gradient(180deg, var(--accent-press), color-mix(in oklab, var(--accent-press) 80%, black)); }
+    .btn--ghost {
+      background: transparent;
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+    .btn[disabled] { opacity: .55; cursor: not-allowed; box-shadow: none; }
+
+    /* ===== フッター固定アクション（親指で押しやすい） ===== */
+    .cta {
+      position: fixed;
+      left: env(safe-area-inset-left);
+      right: env(safe-area-inset-right);
+      bottom: env(safe-area-inset-bottom);
+      z-index: 9;
+      padding: 10px 12px calc(12px + env(safe-area-inset-bottom));
+      backdrop-filter: blur(8px);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.00), rgba(0,0,0,.18) 35%, rgba(0,0,0,.28));
+    }
+    @media (prefers-color-scheme: light) {
+      .cta {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.00), rgba(255,255,255,.9) 45%, rgba(255,255,255,.98));
+        box-shadow: 0 -1px 0 var(--border), 0 -10px 30px rgba(0,0,0,.08) inset;
+      }
+    }
+    .cta__inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 0 var(--space);
+    }
+    .cta .btn { width: 100%; padding: 16px 18px; font-size: 17px; }
+
+    /* アクセシビリティ */
+    :focus-visible { outline: 3px solid color-mix(in oklab, var(--accent) 60%, transparent); outline-offset: 2px; }
+    .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>動的生成画像を共有（Web Share API）</h1>
+      <p>スマホ向けUI。共有シートでTwitterアプリ等に画像ファイルを直接渡せます。共有非対応ブラウザは「画像を保存」→手動添付。</p>
+    </header>
+
+    <section class="card">
+      <div class="card__media">
+        <canvas id="cv" width="800" height="418" aria-label="プレビュー画像"></canvas>
+      </div>
+      <div class="card__body">
+        <div class="field">
+          <label for="txt">共有テキスト（任意）</label>
+          <textarea id="txt" rows="3" placeholder="投稿時に添えるテキストを書けます">#動的画像 テスト投稿</textarea>
+        </div>
+        <div class="btnrow">
+          <button id="btn-redraw" class="btn btn--ghost" type="button">画像を再生成</button>
+          <button id="btn-save" class="btn btn--ghost" type="button">画像を保存</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 画面下 固定CTA（親指で押しやすい大ボタン） -->
+  <div class="cta">
+    <div class="cta__inner">
+      <button id="btn-share" class="btn btn--primary" type="button">
+        Twitterに共有（共有シート）
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ===== 画面解像度に合わせてCanvasをクリスプに描画（Retina対応） =====
+    const cv = document.getElementById('cv');
+    const ctx = cv.getContext('2d');
+
+    function fitCanvasToDisplaySize(canvas) {
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      const { width: cssW, height: cssH } = canvas.getBoundingClientRect();
+      const displayW = Math.round(cssW * dpr);
+      const displayH = Math.round(cssH * dpr);
+      if (canvas.width !== displayW || canvas.height !== displayH) {
+        canvas.width = displayW;
+        canvas.height = displayH;
+        return true;
+      }
+      return false;
+    }
+
+    function draw() {
+      fitCanvasToDisplaySize(cv);
+      const w = cv.width, h = cv.height;
+
+      // 背景グラデ
+      const g = ctx.createLinearGradient(0, 0, w, h);
+      g.addColorStop(0, '#0f2027');
+      g.addColorStop(0.5, '#203a43');
+      g.addColorStop(1, '#2c5364');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, h);
+
+      // タイトル
+      ctx.fillStyle = 'rgba(255,255,255,.94)';
+      ctx.font = `${Math.round(h * 0.10)}px system-ui, "Noto Sans JP"`;
+      ctx.fillText('動的生成画像', Math.round(w * 0.06), Math.round(h * 0.35));
+
+      // タイムスタンプ
+      const ts = new Date().toLocaleString('ja-JP', { hour12: false });
+      ctx.fillStyle = 'rgba(255,255,255,.9)';
+      ctx.font = `${Math.round(h * 0.055)}px system-ui, "Noto Sans JP"`;
+      ctx.fillText(`Generated at ${ts}`, Math.round(w * 0.06), Math.round(h * 0.50));
+
+      // 透かし
+      ctx.globalAlpha = 0.15;
+      ctx.font = `900 ${Math.round(h * 0.28)}px system-ui`;
+      const text = 'X';
+      const m = ctx.measureText(text);
+      ctx.fillText(text, w - m.width - Math.round(w * 0.05), h - Math.round(h * 0.06));
+      ctx.globalAlpha = 1;
+    }
+
+    // 初期描画＆リサイズ対応
+    const ro = new ResizeObserver(() => draw());
+    ro.observe(cv);
+    window.addEventListener('orientationchange', () => setTimeout(draw, 150));
+    draw();
+
+    // ===== 共有・保存 =====
+    const btnShare = document.getElementById('btn-share');
+    const btnSave  = document.getElementById('btn-save');
+    const btnRedraw = document.getElementById('btn-redraw');
+    const txt = document.getElementById('txt');
+
+    btnRedraw.addEventListener('click', draw);
+
+    btnSave.addEventListener('click', async () => {
+      const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dynamic_${Date.now()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    function canUseShareWithFiles() {
+      if (!('share' in navigator)) return false;
+      try {
+        const test = new File(["x"], "x.txt", { type: "text/plain" });
+        return typeof navigator.canShare !== 'function' || navigator.canShare({ files: [test] });
+      } catch { return false; }
+    }
+
+    if (!canUseShareWithFiles()) {
+      btnShare.disabled = true;
+      btnShare.textContent = '共有非対応のブラウザです（画像を保存→手動投稿）';
+    }
+
+    btnShare.addEventListener('click', async () => {
+      try {
+        const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+        const file = new File([blob], 'image.png', { type: 'image/png' });
+        await navigator.share({ text: txt.value || '', files: [file] });
+      } catch (e) {
+        if (e && e.name === 'AbortError') return; // ユーザー中断
+        alert('共有に失敗しました: ' + (e?.message || e));
+      }
+    }, { passive: true });
+  </script>
+</body>
+</html>
