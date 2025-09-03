@@ -2,14 +2,27 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<title>問診票画像（紙風フレーム&グロー / CONFIG一元管理）</title>
+<title>問診票画像（Noto優先 / なければ自動Webフォント）</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light dark" />
 <style>
-  :root{ --bg:#0e1116; --fg:#e7eaee; --muted:#97a1ad; --border:#2b3138; --accent:#2f81f7; --accent-press:#1f6fe0; --radius:12px; --space:clamp(14px,3.6vw,22px); --maxw:780px; }
-  @media (prefers-color-scheme: light){ :root{ --bg:#f6f7f9; --fg:#0f1720; --muted:#5b6776; --border:#e5e7eb; } }
+  :root{
+    /* JPフォントを最優先。Android/ChromeOS向けに Noto Sans CJK JP も併記 */
+    --jp-font: "Noto Sans JP","Noto Sans CJK JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;
+
+    --bg:#0e1116; --fg:#e7eaee; --muted:#97a1ad; --border:#2b3138; --accent:#2f81f7; --accent-press:#1f6fe0;
+    --radius:12px; --space:clamp(14px,3.6vw,22px); --maxw:780px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f6f7f9; --fg:#0f1720; --muted:#5b6776; --border:#e5e7eb; }
+  }
   *{box-sizing:border-box} html,body{height:100%}
-  body{ margin:0; color:var(--fg); background:var(--bg); font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans JP","Hiragino Kaku Gothic ProN",Meiryo,sans-serif; -webkit-font-smoothing:antialiased; line-height:1.6; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left) }
+  body{
+    margin:0; color:var(--fg); background:var(--bg);
+    font-family: var(--jp-font);
+    -webkit-font-smoothing:antialiased; line-height:1.6;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
   .wrap{max-width:var(--maxw); margin:0 auto; padding:var(--space)}
   header h1{ margin:0 0 6px; font-size:clamp(20px,5.4vw,28px) }
   header p{ margin:0 0 var(--space); color:var(--muted); font-size:.95rem }
@@ -22,12 +35,14 @@
   label.title{ display:block; color:var(--muted); font-size:.92rem; margin:0 0 6px }
   textarea, input[type="text"]{
     width:100%; border:1px solid var(--border); background:transparent; color:var(--fg);
-    border-radius:10px; font-size:16px; padding:11px 12px; outline:none;
+    border-radius:10px; font-size:16px; padding:11px 12px; outline:none; font-family: var(--jp-font);
   }
   textarea:focus, input[type="text"]:focus{ border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in oklab, var(--accent) 22%, transparent) }
 
   .choices{ display:flex; flex-wrap:wrap; gap:8px }
-  .chip{ display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); padding:8px 10px; border-radius:999px; user-select:none; font-size:14px; background:transparent; cursor:pointer }
+  .chip{ display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border);
+    padding:8px 10px; border-radius:999px; user-select:none; font-size:14px; background:transparent; cursor:pointer; font-family: var(--jp-font);
+  }
   .chip input{ appearance:none; width:18px; height:18px; border:2px solid var(--muted); border-radius:4px; display:inline-block; position:relative; margin-right:2px }
   .chip input:checked{ border-color:var(--accent); background:var(--accent) }
   .chip input:checked::after{ content:""; position:absolute; inset:2px; background:#fff; border-radius:2px }
@@ -35,7 +50,12 @@
 
   .btnrow{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0 0 }
   @media (max-width:560px){ .btnrow{ grid-template-columns:1fr } }
-  .btn{ -webkit-tap-highlight-color:transparent; user-select:none; appearance:none; border:0; border-radius:12px; font-size:16px; font-weight:700; padding:14px 16px; cursor:pointer; transition:transform .04s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease; box-shadow:0 6px 18px rgba(0,0,0,.12) }
+  .btn{
+    -webkit-tap-highlight-color:transparent; user-select:none; appearance:none; border:0;
+    border-radius:12px; font-size:16px; font-weight:700; padding:14px 16px; cursor:pointer;
+    transition:transform .04s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
+    box-shadow:0 6px 18px rgba(0,0,0,.12); font-family: var(--jp-font);
+  }
   .btn:active{ transform:translateY(1px) scale(.99) }
   .btn--primary{ color:#fff; background:linear-gradient(180deg, var(--accent), color-mix(in oklab, var(--accent) 88%, black)) }
   .btn--primary:active{ background:linear-gradient(180deg, var(--accent-press), color-mix(in oklab, var(--accent-press) 80%, black)) }
@@ -52,8 +72,8 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>問診票画像（紙風フレーム&グロー / CONFIG一元管理）</h1>
-      <p>白い“紙”に薄いグレー枠、右下だけに柔らかい影を付けて紙質感を演出。フォーム＆描画はCONFIGで一元管理、変更は即時反映。</p>
+      <h1>問診票画像（Noto優先 / 無ければ自動Webフォント）</h1>
+      <p>ローカルの <strong>Noto Sans JP</strong> を最優先で使用。無い場合は自動で Google Fonts を読み込み、フォントロード後に Canvas を再描画します。</p>
     </header>
 
     <!-- フォーム自動生成 -->
@@ -75,22 +95,25 @@
   </div>
 
 <script>
-  // ==================== CONFIG（UI/描画を一元管理） ====================
+  // ==================== CONFIG（UI/描画/フォント一元管理） ====================
   const CONFIG = {
+    font: {
+      family: `"Noto Sans JP","Noto Sans CJK JP","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif`,
+      // Canvasで使う代表サイズ・ウェイトをロードに使う
+      toLoad: [
+        { weight: 500, size: 20 },
+        { weight: 600, size: 20 },
+        { weight: 700, size: 20 },
+        { weight: 800, size: 24 }
+      ]
+    },
     canvas: {
-      // “紙”の見た目設定
       paper: {
-        inset: 24,            // キャンバス外周からの余白
-        radius: 16,           // 角丸
-        borderColor: "#e6e8ec", // 薄いグレー枠
-        borderWidth: 2,
-        // 右と下にだけ乗る柔らかい影（グロー）
+        inset: 24, radius: 16, borderColor: "#e6e8ec", borderWidth: 2,
         shadow: { offsetX: 10, offsetY: 12, blur: 28, color: "rgba(0,0,0,0.14)" },
-        // 紙面の微妙なトーン（ごく薄いグラデで紙っぽさ）
-        toneTop: "rgba(0,0,0,0.03)",   // 上端のごく薄いシェード
-        toneBottom: "rgba(0,0,0,0.02)" // 下端のごく薄いシェード
+        toneTop: "rgba(0,0,0,0.03)", toneBottom: "rgba(0,0,0,0.02)"
       },
-      padding: 60 // 紙の内側にとる内容余白（レイアウト計算に使用）
+      padding: 60
     },
     header: {
       title: { text: "問診票", x: 60, y: 120, bar: { w: 10, h: 36, color: "#2f81f7" }, font: { size: 24, weight: 800, color: "#0f1720" } },
@@ -264,6 +287,7 @@
   // ============ Canvas描画 ============
   const cv = document.getElementById('cv');
   const ctx = cv.getContext('2d');
+  const JP_FAMILY = CONFIG.font.family; // まとめて使う
 
   function fitCanvasToDisplaySize(canvas) {
     const dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -277,81 +301,70 @@
   }
   function rr(x,y,w,h,r){ const rad=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+rad,y); ctx.arcTo(x+w,y,x+w,y+h,rad); ctx.arcTo(x+w,y+h,x,y+h,rad); ctx.arcTo(x,y+h,x,y,rad); ctx.arcTo(x,y,x+w,y,rad); ctx.closePath(); }
 
-  // 紙の描画（白、薄いグレー枠、右&下の柔らかい影、微グラデで紙っぽさ）
+  // 紙（白＋薄枠＋右下グロー）
   function drawPaper() {
     const p = CONFIG.canvas.paper;
     const x = p.inset, y = p.inset, w = cv.width - p.inset*2, h = cv.height - p.inset*2;
 
-    // 影は右下だけを強調（オフセット＋ブラー）
     ctx.save();
     ctx.shadowColor = p.shadow.color;
     ctx.shadowBlur = p.shadow.blur;
     ctx.shadowOffsetX = p.shadow.offsetX;
     ctx.shadowOffsetY = p.shadow.offsetY;
-
-    // 白塗りの紙本体
     rr(x, y, w, h, p.radius);
     ctx.fillStyle = "#ffffff";
     ctx.fill();
     ctx.restore();
 
-    // 紙の微トーン（上部わずかに暗く、下部にほんのり）
+    // 紙トーン（上:うっすら暗、下:うっすら明）
     const topGrad = ctx.createLinearGradient(0, y, 0, y + Math.min(80, h*0.08));
     topGrad.addColorStop(0, p.toneTop);
     topGrad.addColorStop(1, "rgba(255,255,255,0)");
     ctx.save(); rr(x, y, w, h, p.radius); ctx.clip();
     ctx.fillStyle = topGrad; ctx.fillRect(x, y, w, Math.min(80, h*0.08));
-
     const botGrad = ctx.createLinearGradient(0, y+h - Math.min(100, h*0.1), 0, y+h);
     botGrad.addColorStop(0, "rgba(255,255,255,0)");
     botGrad.addColorStop(1, p.toneBottom);
     ctx.fillStyle = botGrad; ctx.fillRect(x, y+h - Math.min(100, h*0.1), w, Math.min(100, h*0.1));
     ctx.restore();
 
-    // 薄いグレー枠
-    ctx.strokeStyle = p.borderColor;
-    ctx.lineWidth = p.borderWidth;
-    rr(x, y, w, h, p.radius);
-    ctx.stroke();
+    // 枠線
+    ctx.strokeStyle = p.borderColor; ctx.lineWidth = p.borderWidth;
+    rr(x, y, w, h, p.radius); ctx.stroke();
   }
 
   function findField(id){ return CONFIG.sections.flatMap(s=>s.fields).find(f=>f.id===id) }
 
   function drawTitleArea(vals) {
     const {title,date,basicsLineY,basicsLineColor,basicsLineWidth} = CONFIG.header;
-    // タイトル
     ctx.fillStyle = title.bar.color; ctx.fillRect(title.x, title.y - title.bar.h + 2, title.bar.w, title.bar.h);
-    ctx.fillStyle = title.font.color; ctx.font = `${title.font.weight} ${title.font.size}px system-ui, "Noto Sans JP"`;
+    ctx.fillStyle = title.font.color; ctx.font = `${title.font.weight} ${title.font.size}px ${JP_FAMILY}`;
     ctx.fillText(title.text, title.x + title.bar.w + 12, title.y);
-    // 日付
     if (date?.show){
       const ts = new Date().toLocaleString('ja-JP', {year:'numeric',month:'2-digit',day:'2-digit'});
       const tw = ctx.measureText(ts).width;
-      ctx.font = `${date.font.weight} ${date.font.size}px system-ui, "Noto Sans JP"`;
+      ctx.font = `${date.font.weight} ${date.font.size}px ${JP_FAMILY}`;
       ctx.fillStyle = date.font.color;
       ctx.fillText(ts, cv.width - CONFIG.canvas.paper.inset - date.xRight - tw + date.xRight, title.y);
     }
-    // 下線
     ctx.strokeStyle = basicsLineColor; ctx.lineWidth = basicsLineWidth;
     ctx.beginPath();
     ctx.moveTo(CONFIG.canvas.paper.inset + 36, basicsLineY);
     ctx.lineTo(cv.width - CONFIG.canvas.paper.inset - 36, basicsLineY);
     ctx.stroke();
 
-    // 氏名（左列）
     const nameField = findField('name'); const pair = nameField.layout;
     ctx.fillStyle = pair.font.color;
-    ctx.font = `${pair.font.labelWeight} ${pair.font.labelSize}px system-ui, "Noto Sans JP"`;
+    ctx.font = `${pair.font.labelWeight} ${pair.font.labelSize}px ${JP_FAMILY}`;
     ctx.fillText('氏名', pair.xLabel, pair.y);
-    ctx.font = `${pair.font.valueWeight} ${pair.font.valueSize}px system-ui, "Noto Sans JP"`;
+    ctx.font = `${pair.font.valueWeight} ${pair.font.valueSize}px ${JP_FAMILY}`;
     ctx.fillText(vals.name || pair.fallback || '（未入力）', pair.xValue, pair.y);
 
-    // 年齢/性別（右列）
     const sexField = findField('sex'); const r = sexField.layout;
     ctx.fillStyle = r.font.color;
-    ctx.font = `${r.font.labelWeight} ${r.font.labelSize}px system-ui, "Noto Sans JP"`;
+    ctx.font = `${r.font.labelWeight} ${r.font.labelSize}px ${JP_FAMILY}`;
     ctx.fillText(r.labelText, r.xLabel, r.y);
-    ctx.font = `${r.font.valueWeight} ${r.font.valueSize}px system-ui, "Noto Sans JP"`;
+    ctx.font = `${r.font.valueWeight} ${r.font.valueSize}px ${JP_FAMILY}`;
     const computed = r.compute ? r.compute(vals) : '';
     ctx.fillText(computed, r.xValue, r.y);
   }
@@ -362,7 +375,7 @@
     if (lay.title){
       ctx.fillStyle = lay.title.font.color;
       ctx.fillRect(lay.title.x, lay.title.y - lay.title.bar.h + 2, lay.title.bar.w, lay.title.bar.h);
-      ctx.font = `${lay.title.font.weight} ${lay.title.font.size}px system-ui, "Noto Sans JP"`;
+      ctx.font = `${lay.title.font.weight} ${lay.title.font.size}px ${JP_FAMILY}`;
       ctx.fillText(lay.title.text, lay.title.x + lay.title.bar.w + 12, lay.title.y);
     }
     labels.forEach(lb=>{
@@ -370,10 +383,10 @@
       ctx.strokeRect(lay.x, y - lay.boxSize + 4, lay.boxSize, lay.boxSize);
       if (checkedSet.has(lb)){
         ctx.fillStyle = lay.color.fill; ctx.fillRect(lay.x, y - lay.boxSize + 4, lay.boxSize, lay.boxSize);
-        ctx.fillStyle = lay.color.check; ctx.font = `700 ${Math.round(lay.boxSize*0.8)}px system-ui`;
+        ctx.fillStyle = lay.color.check; ctx.font = `700 ${Math.round(lay.boxSize*0.8)}px ${JP_FAMILY}`;
         ctx.fillText('✓', lay.x + 2, y + Math.round(lay.boxSize*0.2));
       }
-      ctx.fillStyle = lay.color.text; ctx.font = `500 ${lay.textSize}px system-ui, "Noto Sans JP"`;
+      ctx.fillStyle = lay.color.text; ctx.font = `500 ${lay.textSize}px ${JP_FAMILY}`;
       ctx.fillText(lb, lay.x + lay.boxSize + 10, y + Math.round(lay.textSize*0.15));
       y += lineH + lay.lineGap*0.25;
     });
@@ -386,7 +399,7 @@
     if (lay.title){
       ctx.fillStyle = lay.title.font.color;
       ctx.fillRect(lay.title.x, lay.title.y - lay.title.bar.h + 2, lay.title.bar.w, lay.title.bar.h);
-      ctx.font = `${lay.title.font.weight} ${lay.title.font.size}px system-ui, "Noto Sans JP"`;
+      ctx.font = `${lay.title.font.weight} ${lay.title.font.size}px ${JP_FAMILY}`;
       ctx.fillText(lay.title.text, lay.title.x + lay.title.bar.w + 12, lay.title.y);
     }
     options.forEach(lb=>{
@@ -396,7 +409,7 @@
         ctx.fillStyle = lay.color.dot;
         ctx.beginPath(); ctx.arc(lay.x + lay.radius, y - lay.radius + 4, Math.round(lay.radius*0.6), 0, Math.PI*2); ctx.fill();
       }
-      ctx.fillStyle = lay.color.text; ctx.font = `500 ${lay.textSize}px system-ui, "Noto Sans JP"`;
+      ctx.fillStyle = lay.color.text; ctx.font = `500 ${lay.textSize}px ${JP_FAMILY}`;
       ctx.fillText(lb, lay.x + lay.radius*2 + 10, y + Math.round(lay.textSize*0.15));
       y += lineH + lay.lineGap*0.25;
     });
@@ -404,14 +417,13 @@
   }
 
   function drawTextareaBox(lay, text){
-    const padX = CONFIG.canvas.padding;
-    const usableW = (cv.width - CONFIG.canvas.paper.inset*2) - padX*0; // 余白は別計算でもOK
+    const usableW = (cv.width - CONFIG.canvas.paper.inset*2);
     const innerW = Math.round(usableW * (lay.wRel || 1)) - 12;
     const h = Math.round(cv.height * (lay.hRel || 0.18));
     if (lay.title){
       ctx.fillStyle = lay.title.font.color;
       ctx.fillRect(lay.title.x, lay.title.y - lay.title.bar.h + 2, lay.title.bar.w, lay.title.bar.h);
-      ctx.font = `${lay.title.font.weight} ${lay.title.font.size}px system-ui, "Noto Sans JP"`;
+      ctx.font = `${lay.title.font.weight} ${lay.title.font.size}px ${JP_FAMILY}`;
       ctx.fillText(lay.title.text, lay.title.x + lay.title.bar.w + 12, lay.title.y);
     }
     rr(lay.x, lay.y + 10, innerW, h, lay.radius||10);
@@ -419,7 +431,7 @@
     ctx.strokeStyle = 'rgba(0,0,0,0.12)'; ctx.stroke();
 
     ctx.fillStyle = lay.font.color;
-    ctx.font = `${lay.font.weight} ${lay.font.size}px system-ui, "Noto Sans JP"`;
+    ctx.font = `${lay.font.weight} ${lay.font.size}px ${JP_FAMILY}`;
     const maxLines = lay.lines || 7;
     const linePx = Math.round(lay.font.size * 1.4);
     wrapAndDrawText(text || '—', lay.x + 12, lay.y + 22 + lay.font.size, innerW - 24, linePx, maxLines);
@@ -435,56 +447,92 @@
 
   function drawSignature(vals){
     const lay = findField('signature').layout;
-    const padX = CONFIG.canvas.padding;
     const y = cv.height - Math.round(cv.height * lay.yRelFromBottom);
     ctx.fillStyle = '#0f1720';
-    ctx.font = `${lay.fontLabel.weight} ${Math.round(cv.height * lay.fontLabel.sizeRel)}px system-ui, "Noto Sans JP"`;
-    ctx.fillText('署名：', CONFIG.canvas.paper.inset + padX - 50, y);
-    ctx.font = `${lay.fontValue.weight} ${Math.round(cv.height * lay.fontValue.sizeRel)}px system-ui, "Noto Sans JP"`;
-    ctx.fillText(getValues().name || '（署名）', CONFIG.canvas.paper.inset + padX + 50, y);
+    ctx.font = `${lay.fontLabel.weight} ${Math.round(cv.height * lay.fontLabel.sizeRel)}px ${JP_FAMILY}`;
+    ctx.fillText('署名：', CONFIG.canvas.paper.inset + 10, y);
+    ctx.font = `${lay.fontValue.weight} ${Math.round(cv.height * lay.fontValue.sizeRel)}px ${JP_FAMILY}`;
+    ctx.fillText(vals.name || '（署名）', CONFIG.canvas.paper.inset + 120, y);
   }
 
   function drawFromConfig(){
     fitCanvasToDisplaySize(cv);
     ctx.clearRect(0,0,cv.width,cv.height);
-
-    // 1) 紙（白＋薄枠＋右下グロー）
     drawPaper();
 
-    // 2) 内容
     const vals = getValues();
     drawTitleArea(vals);
 
     { const f = findField('chief'); const lay = f.layout; const set = new Set(vals.chief||[]); drawCheckboxList(lay, f.options, set); }
-
     { const f = findField('onset'); const lay = f.layout; drawRadioList(lay, f.options, vals.onset);
       if (lay.tempRight && findField('temp')){
-        const padX = CONFIG.canvas.padding;
-        const colW = cv.width - CONFIG.canvas.paper.inset*2 - padX*0;
+        const colW = cv.width - CONFIG.canvas.paper.inset*2;
         const xLabel = CONFIG.canvas.paper.inset + Math.round(colW * lay.tempRight.xRel);
         const yLabel = lay.title.y + Math.round(colW * 0.08);
         ctx.fillStyle = '#0f1720';
-        ctx.font = `${lay.tempRight.fontLabel.weight} ${lay.tempRight.fontLabel.size}px system-ui, "Noto Sans JP"`;
+        ctx.font = `${lay.tempRight.fontLabel.weight} ${lay.tempRight.fontLabel.size}px ${JP_FAMILY}`;
         ctx.fillText(lay.tempRight.label, xLabel, yLabel);
-        ctx.font = `${lay.tempRight.fontValue.weight} ${lay.tempRight.fontValue.size}px system-ui, "Noto Sans JP"`;
+        ctx.font = `${lay.tempRight.fontValue.weight} ${lay.tempRight.fontValue.size}px ${JP_FAMILY}`;
         ctx.fillText(vals.temp || '—', xLabel + 60, yLabel);
       }
     }
-
     { const f = findField('pmh'); const lay = f.layout; const set = new Set(vals.pmh||[]); drawCheckboxList(lay, f.options, set); }
 
     ['meds','allergy'].forEach(id=>{
       const f = findField(id); const lay = f.layout;
       ctx.fillStyle = '#0f1720';
-      ctx.font = `${lay.fontLabel.weight} ${lay.fontLabel.size}px system-ui, "Noto Sans JP"`;
+      ctx.font = `${lay.fontLabel.weight} ${lay.fontLabel.size}px ${JP_FAMILY}`;
       ctx.fillText(lay.label, lay.xLabel, lay.y);
-      ctx.font = `${lay.fontValue.weight} ${lay.fontValue.size}px system-ui, "Noto Sans JP"`;
-      ctx.fillText((vals[id] || '—'), lay.xValue, lay.y);
+      ctx.font = `${lay.fontValue.weight} ${lay.fontValue.size}px ${JP_FAMILY}`;
+      ctx.fillText(vals[id] || '—', lay.xValue, lay.y);
     });
 
     { const f = findField('detail'); drawTextareaBox(f.layout, vals.detail); }
-
     drawSignature(vals);
+  }
+
+  // ============ フォント（Noto優先／無ければWebフォント） ============
+  async function ensureNotoAndRedrawIfNeeded() {
+    // すでにローカルにあるか？（Noto Sans JP / Noto Sans CJK JP のどちらか）
+    const hasLocalNoto =
+      (document.fonts && document.fonts.check(`20px "Noto Sans JP"`)) ||
+      (document.fonts && document.fonts.check(`20px "Noto Sans CJK JP"`));
+
+    if (hasLocalNoto) return; // ローカル命中 → 何もしない
+
+    // 無い場合は Google Fonts を動的読み込み（weights: 500/600/700/800）
+    // preconnect
+    if (!document.getElementById('noto-preconnect')) {
+      const pre = document.createElement('link');
+      pre.id = 'noto-preconnect';
+      pre.rel = 'preconnect';
+      pre.href = 'https://fonts.gstatic.com';
+      pre.crossOrigin = 'anonymous';
+      document.head.appendChild(pre);
+    }
+    // stylesheet
+    if (!document.getElementById('noto-css')) {
+      const link = document.createElement('link');
+      link.id = 'noto-css';
+      link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;600;700;800&display=swap';
+      document.head.appendChild(link);
+    }
+
+    try {
+      // 代表的なウェイトをロード。失敗しても描画は続行（フォールバック表示のまま）。
+      if (document.fonts && document.fonts.load) {
+        await Promise.all(
+          CONFIG.font.toLoad.map(f => document.fonts.load(`${f.weight} ${f.size}px "Noto Sans JP"`))
+        );
+        await document.fonts.ready;
+      }
+      // ロードできたら再描画
+      requestAnimationFrame(drawFromConfig);
+    } catch(e) {
+      // ネットワーク等でロード不可でも無視（フォールバックのまま使える）
+      console.warn('Noto Sans JP webfont load failed:', e);
+    }
   }
 
   // ============ 即時反映 & 初期化 ============
@@ -528,13 +576,15 @@
 
   // ============ 起動 ============
   renderFormFromConfig();
+  // テキスト系の初期値適用
   CONFIG.sections.flatMap(s=>s.fields).forEach(f=>{
     if ((f.kind==='text' || f.kind==='textarea') && f.default!=null){
       const el = document.getElementById(f.id); if (el) el.value = f.default;
     }
   });
   wireLiveRedraw();
-  drawFromConfig();
+  drawFromConfig();              // まずは手元のフォントで描画
+  ensureNotoAndRedrawIfNeeded(); // Notoが無ければ読み込み→ロード後に再描画
 </script>
 </body>
 </html>
